@@ -10,31 +10,39 @@
   ],
   "targets": {
     "dev": {
-      "executor": "@nx/next:server",
-      "defaultConfiguration": "development",
+      "executor": "nx:run-commands",
       "options": {
-        "buildTarget": "pet-licensing:build",
-        "dev": true,
-        "port": 3001
+        "command": "vite --port 3001",
+        "cwd": "apps/pet-licensing",
+        "color": true
       }
     },
     "build": {
-      "executor": "@nx/next:build",
+      "executor": "nx:run-commands",
       "outputs": [
-        "{options.outputPath}"
+        "{workspaceRoot}/dist/apps/pet-licensing/client"
       ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/pet-licensing"
+        "command": "vite build",
+        "cwd": "apps/pet-licensing"
+      },
+      "configurations": {
+        "development": {
+          "command": "vite build --mode development",
+          "cwd": "apps/pet-licensing"
+        },
+        "production": {
+          "command": "vite build --mode production",
+          "cwd": "apps/pet-licensing"
+        }
       }
     },
     "start": {
-      "executor": "@nx/next:server",
-      "defaultConfiguration": "production",
+      "executor": "nx:run-commands",
       "options": {
-        "buildTarget": "pet-licensing:build",
-        "dev": false,
-        "port": 3001
+        "command": "vite preview --port 3001",
+        "cwd": "apps/pet-licensing"
       }
     },
     "lint": {

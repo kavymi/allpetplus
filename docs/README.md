@@ -1,6 +1,6 @@
 # Documentation Index
 
-**Last Updated:** October 23, 2025  
+**Last Updated:** November 8, 2025  
 **Documentation Grade:** 🎉 **A (95/100)** - Grade A Achieved!
 
 Welcome to the All Pet Plus documentation. This guide will help you navigate our comprehensive docs.
@@ -70,6 +70,8 @@ npx nx lint web
 ### Development
 - [Development Guide](./development/development-guide.md) - Daily workflow and best practices
 - [Dev Workflow](./development/dev-workflow.md) 🆕 - Running services and microfrontends ⭐
+- [**Scaffold System Analysis**](./development/scaffold-analysis.md) 🆕🚀 - Complete automation system guide
+- [**Scaffold Quick Reference**](./development/scaffold-quick-reference.md) 🆕⚡ - Daily quick reference card
 - [Code Patterns](./development/code-patterns.md) - TypeScript patterns and examples
 - [Testing Guide](./development/testing-guide.md) - Jest unit tests
 - [Test Coverage](./development/test-coverage.md) 🆕 - Coverage targets and standards
