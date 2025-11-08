@@ -1,0 +1,58 @@
+{
+  "name": "pet-licensing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/pet-licensing/src",
+  "projectType": "application",
+  "tags": [
+    "type:app",
+    "scope:frontend",
+    "domain:pet-licensing"
+  ],
+  "targets": {
+    "dev": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "pet-licensing:build",
+        "dev": true,
+        "port": 3001
+      }
+    },
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/pet-licensing"
+      }
+    },
+    "start": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "production",
+      "options": {
+        "buildTarget": "pet-licensing:build",
+        "dev": false,
+        "port": 3001
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/pet-licensing/**/*.{ts,tsx}"
+        ]
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/pet-licensing/tsconfig.json --noEmit"
+      }
+    }
+  }
+}

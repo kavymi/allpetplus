@@ -1,0 +1,38 @@
+{
+  "name": "@pet/builder-service",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "test": "jest",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@clerk/backend": "^0.38.0",
+    "@clerk/fastify": "^0.6.0",
+    "@fastify/cors": "^8.4.2",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/rate-limit": "^9.0.1",
+    "@pet/domain": "file:../../dist/libs/domain",
+    "@pet/messaging": "file:../../dist/libs/messaging",
+    "@pet/shared": "file:../../dist/libs/shared",
+    "@prisma/client": "^5.7.0",
+    "@trpc/server": "^11.0.0",
+    "close-with-grace": "^1.3.0",
+    "fastify": "^4.26.2",
+    "fastify-plugin": "^4.5.1",
+    "pino": "^9.3.2",
+    "pino-pretty": "^10.3.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prisma": "^5.7.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.2"
+  }
+}

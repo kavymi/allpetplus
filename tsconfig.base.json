@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2022",
+    "module": "esnext",
+    "lib": ["es2022", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@pet/api": ["libs/api/src/index.ts"],
+      "@pet/api/*": ["libs/api/src/*"],
+      "@pet/backend/*": ["services/backend/src/*"],
+      "@pet/domain": ["libs/domain/src/index.ts"],
+      "@pet/messaging": ["libs/messaging/src/index.ts"],
+      "@pet/shared": ["libs/shared/src/index.ts"],
+      "@pet/shared/*": ["libs/shared/src/*"],
+      "@pet/web/*": ["apps/web/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

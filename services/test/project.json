@@ -1,0 +1,43 @@
+{
+  "name": "test",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "services/test/src",
+  "projectType": "application",
+  "tags": [
+    "type:service",
+    "scope:backend",
+    "domain:test"
+  ],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run dev",
+        "cwd": "services/test",
+        "color": true
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd services/test && npm run dev"
+      }
+    },
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/services/test",
+        "main": "services/test/src/main.ts",
+        "tsConfig": "services/test/tsconfig.json"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "services/test/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

@@ -1,0 +1,164 @@
+---
+alwaysApply: true
+---
+
+# AI Development Guidelines & Self-Improvement
+
+## Core Principles
+
+1. **Understand Before Acting**
+   - Search codebase for similar patterns
+   - Read relevant documentation in /docs/
+   - Analyze existing code structure
+   - Ask clarifying questions if needed
+
+2. **Execute Completely**
+   - Finish tasks fully, not partially
+   - Verify changes work as expected
+   - Include all necessary states (loading, error, empty)
+   - Document what was done
+
+3. **Quality Over Speed**
+   - Type safety first (never use `any`)
+   - Proper error handling always
+   - Consider performance implications
+   - Ensure accessibility compliance
+
+4. **Continuous Learning**
+   - Learn from user feedback and corrections
+   - Adapt to project-specific patterns
+   - Improve suggestions based on past mistakes
+   - Reference documentation to stay current
+
+## Before Writing ANY Code
+
+### ALWAYS do this first:
+1. Search codebase for similar implementations
+   ```
+   codebase_search("How does [feature] work?")
+   ```
+
+2. Check documentation
+   ```
+   read_file("docs/development/code-patterns.md")
+   ```
+
+3. Understand the context
+   - What files are related?
+   - What patterns exist?
+   - What conventions are used?
+
+4. Plan the approach
+   - What needs to change?
+   - What are the dependencies?
+   - What could go wrong?
+
+## Code Quality Checklist
+
+### EVERY component/function must have:
+
+✅ **Explicit TypeScript types**
+- No `any` types
+- Interface for props
+- Return type specified
+- Generic types where appropriate
+
+✅ **Complete error handling**
+- Try-catch for async operations
+- Error states in UI
+- User-friendly error messages
+- Proper error logging
+
+✅ **All UI states**
+- Loading state
+- Error state  
+- Empty state
+- Success state
+
+✅ **Accessibility**
+- Semantic HTML
+- ARIA labels
+- Keyboard navigation
+- Focus management
+
+✅ **Performance**
+- Memoization where needed
+- Efficient queries
+- Code splitting considered
+- No unnecessary re-renders
+
+## Self-Improvement Process
+
+### Track These Patterns:
+
+**When user ACCEPTS your code without changes:**
+→ Pattern is good, use it again
+
+**When user makes SMALL TWEAKS:**
+→ Pattern mostly good, refine it
+
+**When user REWRITES completely:**
+→ Pattern wrong, learn the correct one
+
+### Learn From Corrections:
+
+**If user adds error handling:**
+→ Always include error handling in future
+
+**If user fixes types:**
+→ Be more explicit with types
+
+**If user changes structure:**
+→ Learn and follow the preferred pattern
+
+**If user adds loading states:**
+→ Always include loading states
+
+## Project-Specific Learnings
+
+### What Works Well (Use These Patterns):
+- tRPC for all frontend → backend API calls
+- Comprehensive planning documents before big changes
+- Search first, then implement
+- Explicit types everywhere
+- Complete error handling
+- Documentation with examples
+
+### What to Avoid (Don't Do These):
+- Manual fetch() calls (use tRPC)
+- Partial implementations (finish completely)
+- Missing error/loading states
+- Using `any` types
+- Skipping documentation
+- Ignoring existing patterns
+
+## Documentation Standards
+
+### ALWAYS document:
+- Architecture decisions (in /docs/architecture/)
+- Setup guides (in /docs/guides/)
+- Code patterns (in /docs/development/)
+- API changes (update /docs/api-reference.md)
+
+### Documentation Quality:
+- Clear, actionable steps
+- Working code examples
+- Explain WHY, not just HOW
+- Include troubleshooting section
+- Keep up-to-date with code
+
+## Success Indicators
+
+You're doing well when:
+✅ User accepts changes with minimal modifications
+✅ Code follows project conventions automatically
+✅ Type safety is perfect (no `any`)
+✅ Documentation is accurate and helpful
+✅ Implementations are complete
+
+You need improvement when:
+❌ User rewrites your suggestions
+❌ Type errors or `any` types appear
+❌ Missing error/loading states
+❌ Pattern inconsistent with codebase
+❌ Documentation out of sync

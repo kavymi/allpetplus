@@ -1,0 +1,70 @@
+// Builder Service Database Schema
+// Shares the same database with the main backend
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum DesignStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+// ==================== USER DOMAIN ====================
+
+model UserProfile {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkId           String              @unique @db.VarChar(255)
+  email             String?             @db.VarChar(255)
+  emailHash         String?             @db.VarChar(64)
+  preferences       Json?               @db.JsonB
+  createdAt         DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime            @updatedAt @db.Timestamptz(6)
+  lastActiveAt      DateTime?           @db.Timestamptz(6)
+  
+  // Relations
+  savedDesigns      SavedDesign[]
+  
+  @@index([clerkId])
+  @@index([emailHash])
+  @@index([lastActiveAt])
+  @@map("user_profiles")
+}
+
+// ==================== BUILDER DOMAIN ====================
+
+model SavedDesign {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String          @db.Uuid
+  name              String?         @db.VarChar(255)
+  configJson        Json            @db.JsonB
+  priceBreakdown    Json?           @db.JsonB
+  previewUrl        String?         @db.Text
+  thumbnailUrl      String?         @db.Text
+  shareToken        String?         @unique @db.VarChar(255)
+  status            DesignStatus    @default(DRAFT)
+  isTemplate        Boolean         @default(false)
+  viewCount         Int             @default(0)
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+  deletedAt         DateTime?       @db.Timestamptz(6)
+  
+  // Relations
+  user              UserProfile     @relation(fields: [userId], references: [id])
+  
+  @@index([userId, status, createdAt(sort: Desc)])
+  @@index([shareToken])
+  @@index([status])
+  @@index([userId, status])
+  @@map("saved_designs")
+}
+

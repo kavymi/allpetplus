@@ -1,0 +1,36 @@
+app = "pet-backend-staging"
+primary_region = "iad"
+
+[build]
+  dockerfile = "services/backend/Dockerfile"
+
+[deploy]
+  strategy = "rolling"
+
+[env]
+  NODE_ENV = "production"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3001
+
+  [[services.ports]]
+    port = "443"
+    handlers = ["tls", "http"]
+
+  [[services.http_checks]]
+    interval = "15s"
+    grace_period = "10s"
+    timeout = "2s"
+    method = "GET"
+    path = "/healthz"
+
+  [[services.concurrency]]
+    type = "requests"
+    soft_limit = 20
+    hard_limit = 25
+
+[[metrics]]
+  port = 3001
+  path = "/metrics"
+

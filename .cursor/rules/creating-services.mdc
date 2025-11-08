@@ -1,0 +1,358 @@
+---
+alwaysApply: true
+---
+
+# Creating New Services - AI Assistant Guide
+
+## When User Requests New Feature
+
+### Decision Tree:
+
+**User says:** "Add [feature] service"
+
+**Ask yourself:**
+
+#### 1. Is it a frontend feature?
+```
+✅ YES → What kind?
+   ├─ Only public/marketing pages? → Landing Page Only (Pattern 1)
+   ├─ Has user dashboard features? → Landing + Dashboard Tab (Pattern 2)
+   ├─ Simple dashboard page only? → Route in apps/web
+   └─ Complex (>20 components)? → Micro-Frontend (Pattern 2)
+
+❌ NO → Backend service
+```
+
+**Frontend Micro-Frontend Patterns:**
+
+**Pattern 1: Landing Page Only**
+- Public pages with marketing content
+- Shared top nav with link to centralized Dashboard
+- NO dashboard tab integration
+- Use scaffold option: `1) Landing Page Only`
+
+**Pattern 2: Landing + Dashboard Tab**
+- Public pages + dashboard management UI
+- Shared top nav with link to centralized Dashboard  
+- Dashboard content embedded via iframe in main Dashboard
+- Use scaffold option: `2) Landing Page + Dashboard Tab`
+
+**Key Point:** ALL micro-frontends link to the SINGLE centralized dashboard in `apps/web`
+
+#### 2. Is it a backend service?
+```
+✅ YES → Microservice or Module?
+   ├─ High traffic (>1000 req/min)? → Microservice
+   ├─ Different scaling needs? → Microservice
+   ├─ Separate team? → Microservice
+   └─ Simple CRUD? → Module in backend
+```
+
+---
+
+## Creating Micro-Frontend (5-10 min) ⚡ AUTOMATED
+
+### Two Patterns:
+
+**Pattern 1: Landing Page Only** (5 min)
+- Public marketing pages only
+- Shared nav with link to Dashboard
+- NO dashboard integration
+- Use: Marketing sites, SEO content
+
+**Pattern 2: Landing + Dashboard Tab** (10 min)
+- Public pages + dashboard content
+- Shared nav with link to Dashboard
+- Dashboard content embedded in main Dashboard
+- Use: Features with user data management
+
+### Automated Creation:
+
+**Run scaffold script:**
+```bash
+./scripts/scaffold.sh
+
+# Select option 1 or 2
+# Answer: name, port, description
+```
+
+**Auto-generated (in ~30 seconds):**
+- ✅ Full Next.js app structure
+- ✅ Domain types (`libs/domain/src/lib/[name]/`)
+- ✅ tRPC router (`libs/api/src/routers/[name].ts`)
+- ✅ All exports updated automatically
+- ✅ TypeScript configuration
+- ✅ Project.json for NX
+- ✅ Shared navigation component
+- ✅ Landing pages template
+- ✅ Dashboard page (if Pattern 2)
+
+**What you customize:**
+```typescript
+// 1. Domain types
+libs/domain/src/lib/[name]/types.ts
+
+// 2. tRPC implementation  
+libs/api/src/routers/[name].ts
+
+// 3. Landing page content
+apps/[name]/src/app/page.tsx
+
+// 4. Dashboard UI (Pattern 2 only)
+apps/[name]/src/app/dashboard/page.tsx
+```
+
+**Dashboard Integration (Pattern 2 only - 5 min):**
+```typescript
+// 1. Create dashboard tab in apps/web
+// apps/web/src/app/(dashboard)/[name]/page.tsx
+export default function [Name]Tab() {
+  return (
+    <iframe 
+      src="http://localhost:300X/dashboard"
+      className="w-full h-screen border-0"
+      title="[Name] Dashboard"
+    />
+  );
+}
+
+// 2. Update dashboard navigation
+// apps/web/src/components/dashboard/dashboard-nav.tsx
+{ href: '/dashboard/[name]', label: '[Name]', icon: '🎯' }
+```
+
+**Total Time:**
+- Pattern 1 (Landing Only): ~5 minutes
+- Pattern 2 (Landing + Dashboard): ~10 minutes
+
+---
+
+## Creating Microservice (10 min) ⚡ AUTOMATED
+
+### When to Create:
+- High traffic (>1000 req/min)
+- Different scaling needs
+- Separate deployment needed
+- Complex business logic
+
+### Automated Creation:
+
+**Run scaffold script:**
+```bash
+./scripts/scaffold.sh
+
+# Select: 3) Backend Service
+# Answer: name, port, description
+```
+
+**Auto-generated (in ~30 seconds):**
+- ✅ Full Fastify microservice structure
+- ✅ Domain types (`libs/domain/src/lib/[name]/`)
+- ✅ tRPC router (`libs/api/src/routers/[name].ts`)
+- ✅ Docker Compose configuration
+- ✅ All exports updated automatically
+- ✅ Health check endpoints
+- ✅ TypeScript configuration
+- ✅ Service class template
+
+**What you customize:**
+```typescript
+// 1. Domain types
+libs/domain/src/lib/[name]/types.ts
+
+// 2. Service implementation
+services/[name]/src/service.ts
+
+// 3. tRPC router logic
+libs/api/src/routers/[name].ts
+```
+
+**Total: ~10 minutes** (5 min less than manual!)
+
+---
+
+## Creating Backend Module (5 min) ⚡ AUTOMATED
+
+### When to Create:
+- Low/medium traffic (<500 req/min)
+- Coupled with other modules
+- Shared database transactions
+- Simpler to debug
+
+### Automated Creation:
+
+**Run scaffold script:**
+```bash
+./scripts/scaffold.sh
+
+# Select: 4) Backend Module
+# Answer: name, description
+```
+
+**Auto-generated (in ~30 seconds):**
+- ✅ Module structure in `services/backend/src/modules/[name]/`
+- ✅ Service class template
+- ✅ Domain types (`libs/domain/src/lib/[name]/`)
+- ✅ tRPC router (`libs/api/src/routers/[name].ts`)
+- ✅ All exports updated automatically
+- ✅ TypeScript types configured
+
+**What you customize:**
+```typescript
+// 1. Domain types
+libs/domain/src/lib/[name]/types.ts
+
+// 2. Service implementation
+services/backend/src/modules/[name]/service.ts
+
+// 3. Connect tRPC to service
+libs/api/src/routers/[name].ts
+// Update to call your service:
+const service = new [Name]Service(ctx.db);
+return service.list(ctx.userId);
+```
+
+**Total: ~5 minutes** (5 min less than manual!)
+
+---
+
+## Port Conventions
+
+### Frontend Apps:
+```
+3000 - apps/web (main)
+3001 - apps/pet-licensing
+3002 - apps/pet-insurance
+3003 - apps/vet-services
+3004 - apps/pet-training
+300X - future apps
+```
+
+### Backend Services:
+```
+4000 - services/backend (monolith)
+4001 - services/user-service
+4002 - services/builder-service
+4003 - services/order-service
+4004 - services/webhook-service
+4005+ - future services
+```
+
+---
+
+## Domain Organization
+
+### Always Create Domain First:
+```bash
+# 1. Create domain in libs/domain/src/lib/[name]/
+mkdir -p libs/domain/src/lib/[name]
+
+# 2. Create files:
+- types.ts        # TypeScript interfaces
+- validation.ts   # Zod schemas
+- utils.ts        # Business logic
+
+# 3. Export from libs/domain/src/index.ts
+export * from './lib/[name]';
+```
+
+---
+
+## Templates to Use
+
+### Micro-Frontend Template:
+**Copy from:** `apps/pet-licensing/`
+- ✅ Next.js setup
+- ✅ Public landing page
+- ✅ Dashboard embedded view
+- ✅ Integration pattern
+
+### Microservice Template:
+**Copy from:** `services/builder-service/`
+- ✅ Fastify setup
+- ✅ Health checks
+- ✅ Docker configuration
+- ✅ Deployment config
+
+### Backend Module Template:
+**Copy from:** `services/backend/src/modules/pet/`
+- ✅ Service class pattern
+- ✅ Business logic layer
+- ✅ tRPC integration
+
+### Domain Template:
+**Copy from:** `libs/domain/src/lib/pet/`
+- ✅ Type definitions
+- ✅ Zod validation
+- ✅ Business utilities
+
+---
+
+## Integration Checklist
+
+### For Micro-Frontend:
+- [ ] App created with correct port
+- [ ] Public landing page
+- [ ] Dashboard embedded view
+- [ ] Dashboard tab created (`apps/web/src/app/(dashboard)/[name]/`)
+- [ ] Navigation updated
+- [ ] Uses `@pet/domain` for shared types
+
+### For Microservice:
+- [ ] Service created with correct port
+- [ ] Domain created in `libs/domain/`
+- [ ] tRPC router added
+- [ ] Added to `docker-compose.microservices.yml`
+- [ ] Health check endpoint
+- [ ] Deployment config (fly.toml)
+
+### For Backend Module:
+- [ ] Module folder created
+- [ ] Service class implemented
+- [ ] Domain types created
+- [ ] tRPC router added
+- [ ] Exported from module index
+
+---
+
+## When User Says...
+
+### "Add pet insurance feature"
+**Response:**
+1. Determine if micro-frontend or module
+2. Create domain in libs/domain/
+3. Follow appropriate template
+4. Integrate into dashboard
+5. Document what was created
+
+### "Create pet grooming service"
+**Response:**
+1. Ask: "Should this be a separate app (has landing page) or dashboard-only?"
+2. Create based on answer
+3. Share domain types
+4. Integrate appropriately
+
+### "We need order tracking"
+**Response:**
+1. This is core functionality → Module in backend
+2. Create order domain
+3. Create order module
+4. Add tRPC router
+5. Create dashboard page
+
+---
+
+## Always Remember:
+
+✅ **Create domain first** - Types, validation, business logic  
+✅ **Use templates** - Don't start from scratch  
+✅ **Integrate via tRPC** - Type-safe communication  
+✅ **Share via @pet/domain** - Single source of truth  
+✅ **Document what you create** - Update relevant docs  
+✅ **Test integration** - Verify everything works  
+
+---
+
+**See full guides:**
+- `/docs/guides/CREATE_NEW_MICROFRONTEND.md`
+- `/docs/guides/CREATE_NEW_MICROSERVICE.md`

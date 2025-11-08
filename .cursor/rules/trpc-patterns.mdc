@@ -1,0 +1,113 @@
+---
+alwaysApply: true
+---
+
+# tRPC API Patterns
+
+## When to Use tRPC vs Fastify
+
+**Use tRPC for:**
+- Frontend → Backend API calls
+- User data operations (CRUD)
+- Authenticated endpoints
+- Type-safe data fetching
+
+**Use Fastify for:**
+- External webhooks (Shopify, Stripe, etc.)
+- Background workers (BullMQ jobs)
+- Public APIs without authentication
+- Third-party integrations
+
+## tRPC Code Patterns
+
+### Queries (Read Operations)
+```typescript
+// ✅ ALWAYS use this pattern for data fetching
+const { data, isLoading, error } = trpc.designs.list.useQuery({ 
+  status: 'ACTIVE', 
+  limit: 20 
+});
+
+// Include loading and error states
+if (isLoading) return <LoadingState />;
+if (error) return <ErrorState message={error.message} />;
+```
+
+### Mutations (Write Operations)
+```typescript
+// ✅ ALWAYS use this pattern for create/update/delete
+const createDesign = trpc.designs.create.useMutation({
+  onSuccess: (data) => {
+    // Handle success
+  },
+  onError: (error) => {
+    // Handle error
+  },
+});
+
+await createDesign.mutateAsync({
+  name: 'My Design',
+  configJson: { size: 'M', color: 'blue' },
+});
+```
+
+### Creating New tRPC Procedures
+
+**Location:** `libs/api/src/routers/[domain].ts`
+
+```typescript
+export const [domain]Router = router({
+  // Query example
+  list: protectedProcedure
+    .input(z.object({
+      limit: z.number().min(1).max(100).default(20),
+      cursor: z.string().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.[model].findMany({ ... });
+    }),
+
+  // Mutation example
+  create: protectedProcedure
+    .input(z.object({
+      name: z.string().min(1).max(255),
+      // ... more fields
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.[model].create({ data: input });
+    }),
+});
+```
+
+**Then add to root router:**
+```typescript
+// libs/api/src/root.ts
+export const appRouter = router({
+  designs: designsRouter,
+  [domain]: [domain]Router,  // Add new router here
+});
+```
+
+## Import Pattern for tRPC
+
+```typescript
+// ✅ Correct import
+import { trpc } from '@/lib/trpc';
+
+// Use in component
+const { data } = trpc.designs.list.useQuery();
+```
+
+## Never Do This
+
+```typescript
+// ❌ DON'T use manual fetch for backend API calls
+const response = await fetch('/api/designs');
+
+// ❌ DON'T skip type safety
+const data: any = await trpc.designs.list.query();
+
+// ❌ DON'T forget error/loading states
+const { data } = trpc.designs.list.useQuery();
+return <div>{data.designs.map(...)}</div>; // Crashes if loading!
+```

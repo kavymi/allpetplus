@@ -1,0 +1,215 @@
+---
+alwaysApply: true
+---
+
+# Documentation Standards
+
+## 🚨 CRITICAL RULE: Documentation File Location
+
+### ALWAYS Create .md Files in /docs/ Folder
+**NEVER create .md files in the project root** except for:
+- `/README.md` (project overview)
+- `/CLAUDE.md` (AI assistant guidelines)
+- `/CHANGELOG.md` (if needed)
+- `README.md` files in subdirectories (e.g., `libs/*/README.md`, `apps/*/README.md`)
+
+### ❌ NEVER Do This:
+```bash
+# DON'T create completion/status docs in root
+/FEATURE_COMPLETE.md
+/IMPLEMENTATION_SUMMARY.md
+/SESSION_SUMMARY.md
+```
+
+### ✅ ALWAYS Do This:
+```bash
+# DO create in appropriate /docs/ folder
+/docs/archive/FEATURE_COMPLETE.md
+/docs/features/feature-name.md
+/docs/guides/setup-guide.md
+```
+
+## Where Documentation Lives
+
+### /docs/ Folder Structure
+```
+docs/
+├── README.md                    # Documentation index
+├── QUICK_REFERENCE.md          # Quick command reference
+├── troubleshooting-faq.md      # Common issues and solutions
+├── api/                        # API documentation
+│   ├── api-reference.md
+│   └── backend-api-reference.md
+├── architecture/               # System design and architecture
+│   ├── architecture.md
+│   ├── component-architecture.md
+│   ├── database-scaling-plan.md
+│   └── 3d-preview-system.md
+├── design/                     # Design system and guidelines
+│   ├── design-system-implementation.md
+│   ├── motion-guidelines.md
+│   └── TYPOGRAPHY_GUIDE.md
+├── development/                # Development guides and patterns
+│   ├── code-patterns.md
+│   ├── testing-guide.md
+│   ├── performance-guide.md
+│   ├── playwright-guide.md
+│   ├── DEVELOPMENT_GUIDE.md
+│   └── DEV_WORKFLOW.md
+├── features/                   # Feature-specific guides
+│   ├── seo-implementation-guide.md
+│   └── 3d-collar-customizer.md
+├── guides/                     # Setup and configuration
+│   ├── environment-setup.md
+│   ├── database-setup.md
+│   ├── api-keys.md
+│   └── trpc-usage-examples.md
+├── ops/                        # Operations and deployment
+│   ├── deploy.md
+│   └── backend-deployment.md
+├── troubleshooting/            # Detailed troubleshooting
+│   └── react-19-compatibility.md
+└── archive/                    # Historical implementation notes
+    ├── BACKEND_IMPROVEMENTS_COMPLETE.md
+    ├── IMPLEMENTATION_SUMMARY.md
+    └── [other completion/status docs]
+```
+
+## When to Create Documentation
+
+### ALWAYS document:
+- New features or major changes
+- Architecture decisions
+- Breaking changes
+- Configuration requirements
+- Non-obvious decisions
+- API changes
+
+### Where to put it:
+- **Setup guides** → `/docs/guides/`
+- **Architecture decisions** → `/docs/architecture/`
+- **Code patterns** → `/docs/development/`
+- **API reference** → `/docs/api/`
+- **Troubleshooting** → `/docs/troubleshooting-faq.md` or `/docs/troubleshooting/`
+- **Design system** → `/docs/design/`
+- **Feature guides** → `/docs/features/`
+- **Completion/status docs** → `/docs/archive/`
+- **Operations** → `/docs/ops/`
+
+### 🚫 File Naming Rules:
+- **NEVER** create files with names like:
+  - `*_COMPLETE.md`
+  - `*_SUMMARY.md`
+  - `*_STATUS.md`
+  - `*_IMPLEMENTATION.md`
+  
+  In the project root! These go in `/docs/archive/`
+
+- **ALWAYS** use kebab-case (lowercase-with-hyphens):
+  - ✅ `feature-name.md`
+  - ✅ `setup-guide.md`
+  - ✅ `api-reference.md`
+  - ❌ `FEATURE_NAME.md`
+  - ❌ `Setup_Guide.md`
+  - ❌ `ApiReference.md`
+
+- **DO** use descriptive names in appropriate folders:
+  - `/docs/features/feature-name.md`
+  - `/docs/guides/setup-feature.md`
+  - `/docs/architecture/feature-architecture.md`
+
+## Documentation Quality Standards
+
+### ✅ GOOD Documentation:
+- Clear, actionable steps
+- Working code examples
+- Explains WHY, not just HOW
+- Includes troubleshooting section
+- Up-to-date with codebase
+- Cross-references related docs
+
+### ❌ BAD Documentation:
+- Vague instructions
+- No code examples
+- Out of date
+- Missing error scenarios
+- No context or reasoning
+
+## Documentation Template
+
+```markdown
+# Feature Name
+
+**Purpose:** One-line description of what this does  
+**Status:** Complete / In Progress  
+**Last Updated:** [Date]
+
+## Quick Start
+
+[3-5 steps to get started]
+
+## Detailed Guide
+
+[Comprehensive explanation]
+
+### Step 1: [Action]
+[Detailed instructions with code examples]
+
+### Step 2: [Action]
+[Detailed instructions with code examples]
+
+## Examples
+
+### Basic Usage
+[Working code example]
+
+### Advanced Usage
+[Working code example]
+
+## Troubleshooting
+
+### Issue: [Common problem]
+**Solution:** [How to fix]
+
+## Related Documentation
+- [Link to related doc 1]
+- [Link to related doc 2]
+```
+
+## Required Reading for AI
+
+Before working on Harness Hero, AI assistants MUST read:
+
+1. `/docs/README.md` - Documentation index
+2. `/.cursor/rules/` - All rule files
+3. `/docs/architecture/` - System architecture
+4. `/docs/development/code-patterns.md` - Code patterns
+5. `/README.md` - Project overview
+
+## Referencing Documentation
+
+### When answering questions:
+- "See /docs/guides/environment-setup.md for setup instructions"
+- "Follow patterns in /docs/development/code-patterns.md"
+- "Check /docs/architecture/monorepo-organization-analysis.md for structure"
+
+### When implementing features:
+- Read relevant docs first
+- Follow documented patterns
+- Update docs if patterns change
+- Add examples to docs
+
+## Keeping Documentation Current
+
+### After making changes:
+1. Update relevant documentation
+2. Add new examples if needed
+3. Note breaking changes
+4. Update cross-references
+
+### Documentation Quality Check:
+- [ ] All code examples work
+- [ ] All links resolve correctly
+- [ ] No outdated information
+- [ ] Clear and actionable
+- [ ] Includes troubleshooting

@@ -1,0 +1,276 @@
+// All Pet Plus Database Schema
+// Optimized for performance and security with Shopify + Clerk integration
+
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PRODUCTION
+  QUALITY_CHECK
+  SHIPPED
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+enum WebhookStatus {
+  PENDING
+  PROCESSED
+  FAILED
+  RETRYING
+}
+
+enum DesignStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ExperimentStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+// ==================== USER DOMAIN ====================
+
+model UserProfile {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkId           String              @unique @db.VarChar(255)
+  email             String?             @db.VarChar(255) // Encrypted at application level
+  emailHash         String?             @db.VarChar(64) // For lookups
+  preferences       Json?               @db.JsonB
+  createdAt         DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime            @updatedAt @db.Timestamptz(6)
+  lastActiveAt      DateTime?           @db.Timestamptz(6)
+  
+  // Relations
+  savedDesigns      SavedDesign[]
+  experimentAssignments ExperimentAssignment[]
+  petProfiles       PetProfile[]
+  
+  @@index([clerkId])
+  @@index([emailHash])
+  @@index([lastActiveAt])
+  @@map("user_profiles")
+}
+
+// ==================== PET DOMAIN ====================
+
+model PetProfile {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String          @db.Uuid
+  name              String          @db.VarChar(100)
+  type              String          @db.VarChar(20) // DOG, CAT, BIRD, RABBIT, OTHER
+  breed             String?         @db.VarChar(100)
+  breedMix          String[]        @db.Text
+  gender            String          @db.VarChar(10) // MALE, FEMALE, UNKNOWN
+  birthDate         DateTime?       @db.Timestamptz(6)
+  ageYears          Int?
+  ageMonths         Int?
+  size              String          @db.VarChar(20) // TINY, SMALL, MEDIUM, LARGE, EXTRA_LARGE
+  color             String?         @db.VarChar(50)
+  markings          String?         @db.VarChar(255)
+  measurements      Json?           @db.JsonB // PetMeasurements
+  health            Json?           @db.JsonB // PetHealthInfo
+  behavior          Json?           @db.JsonB // PetBehavior
+  photoUrl          String?         @db.Text
+  photos            String[]        @db.Text
+  microchipId       String?         @db.VarChar(50)
+  registrationNumber String?        @db.VarChar(100)
+  vetInfo           Json?           @db.JsonB
+  isPrimary         Boolean         @default(false)
+  isActive          Boolean         @default(true)
+  metadata          Json?           @db.JsonB
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+  deletedAt         DateTime?       @db.Timestamptz(6)
+  
+  // Relations
+  user              UserProfile     @relation(fields: [userId], references: [id])
+  
+  @@index([userId, deletedAt])
+  @@index([userId, isPrimary])
+  @@index([type, size])
+  @@index([microchipId])
+  @@map("pet_profiles")
+}
+
+// ==================== BUILDER DOMAIN ====================
+
+model SavedDesign {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String          @db.Uuid
+  name              String?         @db.VarChar(255)
+  configJson        Json            @db.JsonB // Design configuration
+  priceBreakdown    Json?           @db.JsonB // Cached price calculation
+  previewUrl        String?         @db.Text
+  thumbnailUrl      String?         @db.Text
+  shareToken        String?         @unique @db.VarChar(255)
+  status            DesignStatus    @default(DRAFT)
+  isTemplate        Boolean         @default(false)
+  viewCount         Int             @default(0)
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+  deletedAt         DateTime?       @db.Timestamptz(6)
+  
+  // Relations
+  user              UserProfile     @relation(fields: [userId], references: [id])
+  
+  @@index([userId, status, createdAt(sort: Desc)])
+  @@index([shareToken])
+  @@index([status])
+  @@index([userId, status])
+  @@map("saved_designs")
+}
+
+model BuilderPreset {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String          @db.VarChar(255)
+  description       String?         @db.Text
+  category          String          @db.VarChar(100)
+  configJson        Json            @db.JsonB
+  previewUrl        String          @db.Text
+  thumbnailUrl      String          @db.Text
+  sortOrder         Int             @default(0)
+  isActive          Boolean         @default(true)
+  tags              String[]        @db.Text
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+  
+  @@index([category, isActive, sortOrder])
+  @@index([tags], type: Gin)
+  @@map("builder_presets")
+}
+
+// ==================== ORDER DOMAIN ====================
+
+model OrderMeta {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shopifyOrderId    String          @unique @db.VarChar(255)
+  shopifyOrderNumber String         @db.VarChar(255)
+  email             String          @db.VarChar(255) // Encrypted
+  emailHash         String          @db.VarChar(64) // For lookups
+  maskedId          String          @unique @db.VarChar(100) // Public-facing ID
+  status            OrderStatus     @default(PENDING)
+  statusHistory     Json[]          @db.JsonB // Array of status changes
+  designConfig      Json?           @db.JsonB // Snapshot of design at order time
+  shippingInfo      Json?           @db.JsonB // Tracking details
+  metadata          Json?           @db.JsonB // Additional data
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+  
+  @@index([shopifyOrderId])
+  @@index([emailHash, maskedId])
+  @@index([status, createdAt])
+  @@index([createdAt]) // For partitioning
+  @@map("order_meta")
+}
+
+// ==================== WEBHOOK DOMAIN ====================
+
+model WebhookLog {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  webhookId         String          @unique @db.VarChar(255) // From Shopify
+  topic             String          @db.VarChar(255)
+  shopDomain        String          @db.VarChar(255)
+  payloadHash       String          @db.VarChar(64) // For idempotency
+  payload           Json            @db.JsonB
+  status            WebhookStatus   @default(PENDING)
+  attempts          Int             @default(0)
+  lastAttemptAt     DateTime?       @db.Timestamptz(6)
+  processedAt       DateTime?       @db.Timestamptz(6)
+  errorMessage      String?         @db.Text
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  
+  @@index([topic, status, createdAt])
+  @@index([payloadHash])
+  @@index([createdAt]) // For partitioning
+  @@map("webhook_logs")
+}
+
+// ==================== EXPERIMENTATION DOMAIN ====================
+
+model ExperimentAssignment {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String?         @db.Uuid
+  sessionId         String?         @db.VarChar(255)
+  experimentKey     String          @db.VarChar(100)
+  variant           String          @db.VarChar(50)
+  metadata          Json?           @db.JsonB
+  assignedAt        DateTime        @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  user              UserProfile?    @relation(fields: [userId], references: [id])
+  
+  @@unique([userId, experimentKey])
+  @@unique([sessionId, experimentKey])
+  @@index([experimentKey, variant])
+  @@index([assignedAt]) // For analytics
+  @@map("experiment_assignments")
+}
+
+// ==================== AUDIT DOMAIN ====================
+
+model AuditLog {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tableName         String          @db.VarChar(255)
+  recordId          String          @db.Uuid
+  operation         String          @db.VarChar(10) // INSERT, UPDATE, DELETE
+  userId            String?         @db.Uuid
+  clerkSessionId    String?         @db.VarChar(255)
+  changedData       Json?           @db.JsonB
+  ipAddress         String?         @db.Inet
+  userAgent         String?         @db.Text
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  
+  @@index([tableName, recordId])
+  @@index([userId, createdAt])
+  @@index([createdAt]) // For partitioning
+  @@map("audit_logs")
+}
+
+// ==================== ANALYTICS DOMAIN ====================
+
+model AnalyticsEvent {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId         String          @db.VarChar(255)
+  userId            String?         @db.Uuid
+  eventName         String          @db.VarChar(255)
+  eventCategory     String          @db.VarChar(100)
+  properties        Json?           @db.JsonB
+  pageUrl           String?         @db.Text
+  referrer          String?         @db.Text
+  timestamp         DateTime        @default(now()) @db.Timestamptz(6)
+  
+  @@index([sessionId, timestamp])
+  @@index([userId, eventName, timestamp])
+  @@index([eventCategory, eventName])
+  @@index([timestamp]) // For partitioning
+  @@map("analytics_events")
+}
+
+// ==================== CACHE INVALIDATION ====================
+
+model CacheInvalidation {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cacheKey          String          @db.VarChar(255)
+  tags              String[]        @db.Text
+  invalidatedAt     DateTime        @default(now()) @db.Timestamptz(6)
+  reason            String?         @db.VarChar(255)
+  
+  @@index([cacheKey])
+  @@index([tags], type: Gin)
+  @@index([invalidatedAt])
+  @@map("cache_invalidations")
+}

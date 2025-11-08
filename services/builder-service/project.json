@@ -1,0 +1,41 @@
+{
+  "name": "builder-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "services/builder-service/src",
+  "projectType": "application",
+  "tags": ["type:service", "scope:backend", "domain:builder"],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run dev",
+        "cwd": "services/builder-service",
+        "color": true
+      }
+    },
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/services/builder-service",
+        "main": "services/builder-service/src/main.ts",
+        "tsConfig": "services/builder-service/tsconfig.json"
+      }
+    },
+    "db:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma generate",
+        "cwd": "services/builder-service"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["services/builder-service/**/*.ts"]
+      }
+    }
+  }
+}
+

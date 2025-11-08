@@ -1,0 +1,92 @@
+---
+alwaysApply: true
+---
+
+# General Development Rules
+
+## File Organization
+
+### Markdown Files - 🚨 CRITICAL RULE
+- **ALWAYS** put `.md` files inside the `/docs/` folder
+- **NEVER** create `.md` files in project root except:
+  - `/README.md` (project overview only)
+  - `/CLAUDE.md` (AI assistant guidelines only)
+  - `/CHANGELOG.md` (if needed)
+  - `README.md` in subdirectories (e.g., `libs/*/README.md`)
+- **Completion/status documents** → `/docs/archive/`
+- **Feature documentation** → `/docs/features/`
+- **Architecture docs** → `/docs/architecture/`
+- **Setup guides** → `/docs/guides/`
+- **Deployment docs** → `/docs/ops/`
+- **Development guides** → `/docs/development/`
+- **Design system** → `/docs/design/`
+- **API reference** → `/docs/api/`
+
+### Directory Structure
+- `apps/` - User-facing applications
+- `services/` - Backend services
+- `libs/` - Shared libraries
+- `docs/` - All documentation
+- `.cursor/rules/` - AI assistant rules
+
+## Runtime Requirements
+
+### Node Version
+- **ALWAYS** use Node v24 to run or build the web app
+- Backend can use Node v20+
+- Specified in `package.json` engines field
+
+### Package Manager
+- Use `npm 10.7.0` (workspaces enabled)
+- Never use yarn or pnpm
+- Run `npm install` from repo root
+
+## Development Commands
+
+```bash
+# Start all services
+npm run dev
+
+# Start specific app
+nx dev web
+nx serve backend
+
+# Build everything
+npm run build
+
+# Run tests
+npm run test
+
+# Lint code
+npm run lint
+```
+
+## Environment Setup
+
+### Required Files:
+- `apps/web/.env.local` (copy from `env.template`)
+- `services/backend/.env` (copy from `env.template`)
+
+### See Complete Guide:
+`/docs/guides/environment-setup.md`
+
+## Code Organization
+
+### Component Location:
+- UI primitives → `apps/web/src/components/ui/`
+- Domain components → `apps/web/src/components/[domain]/`
+- Examples → `apps/web/src/components/examples/`
+
+### Utility Location:
+- Shared utilities → `libs/shared/src/lib/utils/`
+- App utilities → `apps/web/src/lib/`
+- Backend utilities → `services/backend/src/utils/`
+
+## Import Conventions
+
+See `/cursor/rules/monorepo-imports.mdc` for complete guide.
+
+Quick reference:
+- `@pet/*` - Shared monorepo code
+- `@/` - App-local code
+- `./` - Same directory

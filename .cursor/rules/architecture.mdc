@@ -1,0 +1,168 @@
+---
+alwaysApply: true
+---
+
+# Architecture Patterns & Decisions
+
+## Monorepo Structure
+
+### Directory Purpose
+```
+apps/          # User-facing applications
+services/      # Backend services
+libs/          # Shared libraries
+docs/          # Documentation
+tools/         # Build tools and scripts
+.cursor/rules/ # AI assistant rules (this directory)
+```
+
+### Why apps/ vs services/?
+- **apps/** = User-facing applications (web, mobile, admin dashboard)
+- **services/** = Backend services (API, workers, microservices)
+- **Clear separation** = Easier to understand and maintain
+- **Different deployment** = Apps to Vercel, services to Fly.io
+
+## Library Organization
+
+### Current Libraries:
+```
+libs/
+├── api/          # tRPC API layer (NEW!)
+│   └── End-to-end type-safe API definitions
+│
+└── shared/       # Cross-cutting utilities
+    └── Types, utils, constants used everywhere
+```
+
+### Future Libraries (When Needed):
+```
+libs/
+├── api/          # ✅ Exists
+├── shared/       # ✅ Exists
+├── domain/       # Business logic (builder, commerce, user)
+└── ui-primitives/# Shared UI components (if multi-app)
+```
+
+## Technology Decisions
+
+### Why tRPC?
+- **100% type safety** from database to UI
+- **Zero boilerplate** - No manual API client
+- **Perfect for monorepo** - Types shared automatically
+- **Great DX** - Autocomplete, refactoring, compile-time errors
+
+### Why Fastify + tRPC Hybrid?
+- **tRPC for** user-facing API calls (frontend ↔ backend)
+- **Fastify for** webhooks, workers, external integrations
+- **Best of both** - Type safety where it matters, flexibility where needed
+
+### Why NX Monorepo?
+- **Build caching** - Faster builds
+- **Dependency graph** - Understand impacts
+- **Affected commands** - Only test/build what changed
+- **Task orchestration** - Run multiple targets in parallel
+
+## Data Flow Architecture
+
+### Builder Flow:
+```
+User Interaction
+    ↓
+React Component
+    ↓
+Zustand Store (Client State)
+    ↓
+URL Sync (Shareable)
+    ↓
+tRPC Mutation (Save)
+    ↓
+Prisma → Database
+```
+
+### Order Flow:
+```
+Builder Complete
+    ↓
+tRPC → Create Draft Design
+    ↓
+Redirect to Shopify Checkout
+    ↓
+Shopify Webhook → Backend
+    ↓
+Process Order (BullMQ)
+    ↓
+Update OrderMeta
+    ↓
+Send Confirmation Email
+```
+
+## Deployment Architecture
+
+### Frontend (apps/web):
+- **Platform:** Vercel
+- **Build:** Next.js production build
+- **CDN:** Vercel Edge Network
+- **Env:** Staging + Production
+
+### Backend (services/backend):
+- **Platform:** Fly.io (Docker containers)
+- **Database:** Managed PostgreSQL
+- **Cache:** Managed Redis
+- **Env:** Staging + Production
+
+## Scalability Patterns
+
+### Database Scaling:
+- Read replicas for analytics queries
+- Connection pooling with Prisma
+- Materialized views for reports
+- Proper indexing strategy
+
+### API Scaling:
+- tRPC request batching
+- React Query caching
+- CDN for static assets
+- Edge functions where appropriate
+
+## Making Architecture Decisions
+
+### ALWAYS consider:
+1. **Type safety** - Does it improve type safety?
+2. **Monorepo fit** - Does it leverage monorepo benefits?
+3. **Performance** - What's the performance impact?
+4. **Maintainability** - Is it easy to maintain?
+5. **Team productivity** - Does it improve DX?
+
+### Document decisions:
+- **Why** was this choice made?
+- **What** alternatives were considered?
+- **What** are the trade-offs?
+- **How** does it impact the system?
+
+Location: `/docs/architecture/[decision].md`
+
+## NX Best Practices
+
+### Use NX for:
+- Project dependencies (`nx graph`)
+- Affected changes (`nx affected --target=test`)
+- Parallel execution (`nx run-many --parallel=3`)
+- Build caching (automatic)
+
+### Project Tags:
+```json
+// apps/web/project.json
+{
+  "tags": ["type:app", "scope:frontend"]
+}
+
+// libs/api/project.json
+{
+  "tags": ["type:lib", "scope:api"]
+}
+```
+
+Benefits:
+- Enforce module boundaries
+- Better dependency graph
+- Easier to run related projects

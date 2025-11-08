@@ -1,0 +1,116 @@
+---
+alwaysApply: true
+---
+
+# Monorepo Import Patterns
+
+## Import Hierarchy
+
+### 1. Shared Monorepo Code (Use @pet/* aliases)
+```typescript
+// ✅ ALWAYS use @pet/* for shared libraries
+import { BuilderConfig } from '@pet/domain/builder';
+import { trpc } from '@pet/api';
+import { formatPrice, formatDate } from '@pet/shared/utils';
+import { API_ROUTES } from '@pet/shared/constants';
+```
+
+### 2. App-Local Code (Use @/ alias)
+```typescript
+// ✅ ALWAYS use @/ for app-specific imports in apps/web
+import { Button } from '@/components/ui/button';
+import { config } from '@/lib/config';
+import { useBuilder } from '@/components/builder/use-builder';
+```
+
+### 3. Same Directory (Use relative imports)
+```typescript
+// ✅ Use relative imports for files in same directory
+import { OptionCard } from './option-card';
+import { helper } from './helpers';
+```
+
+## Library Organization
+
+```
+libs/
+├── api/          # tRPC API definitions (NEW!)
+│   └── @pet/api - tRPC routers, procedures, context
+│
+├── shared/       # Cross-cutting utilities
+│   └── @pet/shared - Common types, utils, constants
+│
+└── domain/       # Business logic (Future)
+    └── @pet/domain - Domain-specific types and logic
+
+apps/
+└── web/          # Next.js frontend
+    └── @/ - App-local imports only
+
+services/
+└── backend/      # Fastify backend
+    └── Keep isolated (no @pet/backend imports from frontend!)
+```
+
+## Available Path Aliases
+
+```typescript
+// Configured in tsconfig.base.json:
+"@pet/api": "libs/api/src/index.ts"
+"@pet/api/*": "libs/api/src/*"
+"@pet/shared": "libs/shared/src/index.ts"
+"@pet/shared/*": "libs/shared/src/*"
+"@pet/web/*": "apps/web/src/*"
+"@pet/backend/*": "services/backend/src/*"
+```
+
+## Import Rules
+
+### ✅ DO:
+- Use `@pet/api` for tRPC in frontend
+- Use `@pet/shared` for common utilities
+- Use `@/` for app-local code
+- Use relative `./` for same directory
+
+### ❌ DON'T:
+- Import `@pet/backend/*` from frontend (breaks separation!)
+- Mix import styles unnecessarily
+- Use `../../../` relative paths (use aliases instead)
+- Import from `apps/web` in `libs/` (wrong direction!)
+
+## Example: Proper Import Pattern
+
+```typescript
+// apps/web/src/components/builder/options-pane.tsx
+
+// ✅ Shared monorepo code
+import { trpc } from '@pet/api';
+import { formatPrice } from '@pet/shared/utils';
+
+// ✅ App-local code
+import { Button } from '@/components/ui/button';
+import { config } from '@/lib/config';
+
+// ✅ Same directory
+import { OptionCard } from './option-card';
+import { useBuilder } from './use-builder';
+
+// ❌ NEVER import backend directly
+// import { something } from '@pet/backend/utils'; // NO!
+```
+
+## When Creating New Shared Code
+
+**Ask yourself:**
+1. **Used by multiple apps?** → Create in `libs/shared/`
+2. **Domain-specific logic?** → Create in `libs/domain/` (future)
+3. **tRPC API?** → Add to `libs/api/src/routers/`
+4. **App-specific?** → Keep in `apps/web/src/`
+
+## Migration Path
+
+If you find code that should be shared:
+1. Move to appropriate `libs/` directory
+2. Update imports to use `@pet/*` aliases
+3. Remove from app-specific location
+4. Update all references

@@ -1,0 +1,450 @@
+# All Pet Plus Monorepo - Cursor AI Rules
+
+## Project Context
+You are working on All Pet Plus, a high-performance e-commerce storefront for customizable dog harnesses. This is an NX-powered monorepo with Next.js 15 (App Router) frontend and Fastify backend, integrated with Shopify for commerce operations.
+
+## Technology Stack
+- **Frontend**: Next.js 15, React 19, TypeScript 5.7, Tailwind CSS v4
+- **State Management**: Zustand with persistence middleware
+- **Backend**: Fastify 4, Prisma 5, PostgreSQL, Redis, BullMQ
+- **Authentication**: Clerk
+- **Commerce**: Shopify Headless (Storefront & Admin APIs)
+- **Build System**: NX 20.3
+- **Testing**: Jest, Cypress, Playwright
+- **Package Manager**: npm 10.7.0 (workspaces enabled)
+
+## Code Style & Conventions
+
+### General Rules
+1. **TypeScript First**: Always use TypeScript. Prefer explicit types over inference for function parameters and return types.
+2. **Functional Components**: Use functional React components with hooks. No class components.
+3. **Modern Syntax**: Use ES2022+ features. Destructuring, optional chaining, and nullish coalescing are preferred.
+4. **Async/Await**: Always use async/await over Promise chains.
+5. **Error Handling**: Use try-catch blocks for async operations. Handle errors gracefully with user-friendly messages.
+
+### File Organization
+```
+apps/web/src/
+├── app/                 # Next.js App Router pages
+├── components/          # React components
+│   ├── ui/             # Reusable UI primitives
+│   ├── builder/        # Builder-specific components
+│   └── landing/        # Landing page components
+├── lib/                # Utilities and helpers
+└── workers/            # Web Workers for heavy operations
+
+services/backend/src/
+├── config/             # Configuration files
+├── plugins/            # Fastify plugins
+├── routes/             # API routes
+├── jobs/               # Queue job processors
+└── utils/              # Backend utilities
+```
+
+### React/Next.js Patterns
+```tsx
+// Use 'use client' directive only when necessary
+'use client';
+
+// Import order: React/Next → External → Internal → Types
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { BuilderConfig } from '@/lib/types';
+
+// Explicit prop types with interface
+interface ComponentProps {
+  title: string;
+  isActive?: boolean;
+  onUpdate: (value: string) => void;
+}
+
+// Functional component with explicit return type
+export function Component({ title, isActive = false, onUpdate }: ComponentProps): React.ReactElement {
+  // Implementation
+}
+```
+
+### State Management (Zustand)
+```typescript
+// Always use TypeScript interfaces for store state
+interface BuilderStore {
+  selection: BuilderSelection;
+  updateSelection: (updates: Partial<BuilderSelection>) => void;
+  // Include proper typing for all store methods
+}
+
+// Use immer for complex state updates when needed
+```
+
+### Styling with Tailwind CSS v4
+```tsx
+// Use CSS variables from globals.css for theming
+className="bg-[var(--color-surface)] text-[var(--color-foreground)]"
+
+// Prefer semantic color names
+className="border-[var(--color-border-strong)]"
+
+// Responsive design with mobile-first approach
+className="px-4 sm:px-6 lg:px-8"
+
+// Use custom properties for animations
+style={{ '--transition-duration': 'var(--transition-base)' }}
+```
+
+### Backend (Fastify) Patterns
+```typescript
+// Always use TypeScript with strict types
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+
+// Use Zod for validation
+import { z } from 'zod';
+
+const schema = z.object({
+  name: z.string().min(1).max(255),
+  configJson: z.record(z.unknown()),
+});
+
+// Async route handlers with proper error handling
+export async function routes(fastify: FastifyInstance) {
+  fastify.post<{ Body: z.infer<typeof schema> }>('/api/designs', {
+    schema: {
+      body: schema,
+    },
+  }, async (request, reply) => {
+    try {
+      // Implementation
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({ error: 'Internal server error' });
+    }
+  });
+}
+```
+
+### Database (Prisma) Patterns
+```typescript
+// Always use transactions for multiple operations
+const result = await fastify.db.$transaction(async (tx) => {
+  const user = await tx.userProfile.create({ ... });
+  const design = await tx.savedDesign.create({ ... });
+  return { user, design };
+});
+
+// Use select to minimize data transfer
+const designs = await fastify.db.savedDesign.findMany({
+  where: { userId, status: 'ACTIVE' },
+  select: {
+    id: true,
+    name: true,
+    previewUrl: true,
+    updatedAt: true,
+  },
+  orderBy: { createdAt: 'desc' },
+});
+```
+
+## Performance Guidelines
+1. **Image Optimization**: Use next/image with Cloudinary loader
+2. **Code Splitting**: Leverage dynamic imports for heavy components
+3. **Caching**: Implement stale-while-revalidate for Shopify data
+4. **Web Workers**: Use for preview rendering and heavy computations
+5. **Database Queries**: Add proper indexes, use pagination
+6. **Bundle Size**: Monitor with analyze script, tree-shake imports
+
+## Accessibility Requirements
+1. **Motion**: Always respect prefers-reduced-motion
+2. **Focus States**: Ensure visible focus indicators using CSS variables
+3. **ARIA Labels**: Add proper labels to interactive elements
+4. **Semantic HTML**: Use proper heading hierarchy and landmarks
+5. **Color Contrast**: Meet WCAG AA standards using the defined palette
+
+## Security Best Practices
+1. **Input Validation**: Always validate with Zod schemas
+2. **Authentication**: Verify Clerk JWTs on protected routes
+3. **Rate Limiting**: Apply to all public endpoints
+4. **HMAC Verification**: Required for all Shopify webhooks
+5. **Environment Variables**: Never commit secrets, use env.template files
+
+## Testing Approach
+```typescript
+// Unit tests with descriptive names
+describe('BuilderOptionsPane', () => {
+  it('should update selection when option is clicked', () => {
+    // Arrange, Act, Assert pattern
+  });
+});
+
+// Integration tests for API routes
+describe('POST /api/designs', () => {
+  it('should create design for authenticated user', async () => {
+    // Test with real database transactions
+  });
+});
+```
+
+## Git Commit Conventions
+Follow conventional commits:
+- `feat:` New features
+- `fix:` Bug fixes
+- `perf:` Performance improvements
+- `refactor:` Code refactoring
+- `test:` Test additions/updates
+- `docs:` Documentation changes
+- `chore:` Maintenance tasks
+
+## NX Commands to Remember
+```bash
+# Development
+nx dev web              # Start Next.js dev server
+nx serve backend        # Start Fastify server
+nx run-many --target=dev --parallel=3  # Run all
+
+# Testing & Quality
+nx affected --target=lint
+nx affected --target=test
+nx affected --target=build
+
+# Database
+cd services/backend && npm run db:migrate
+cd services/backend && npm run db:studio
+```
+
+## Common Pitfalls to Avoid
+1. Don't use `any` type - always provide proper types
+2. Don't skip error boundaries in React components
+3. Don't make direct database calls from Next.js - use API routes
+4. Don't store sensitive data in localStorage - use secure cookies
+5. Don't skip loading states - always show feedback to users
+6. Don't ignore TypeScript errors - fix them properly
+7. Don't use synchronous operations that block the main thread
+
+## tRPC API Patterns (NEW!)
+
+### End-to-End Type Safety
+```typescript
+// ✅ Use tRPC for all frontend → backend API calls
+import { trpc } from '@/lib/trpc';
+
+// Queries (read operations)
+const { data, isLoading, error } = trpc.designs.list.useQuery({ 
+  status: 'ACTIVE', 
+  limit: 20 
+});
+
+// Mutations (write operations)
+const createDesign = trpc.designs.create.useMutation({
+  onSuccess: () => {
+    // Handle success
+  },
+});
+
+await createDesign.mutateAsync({
+  name: 'My Design',
+  configJson: { size: 'M', color: 'blue' },
+});
+```
+
+### When to Use tRPC vs Fastify
+```markdown
+✅ Use tRPC for:
+- Frontend → Backend API calls
+- User data operations
+- CRUD operations
+- Authenticated endpoints
+
+✅ Use Fastify for:
+- Webhooks (external → backend)
+- Background workers (BullMQ)
+- Public APIs
+- Third-party integrations
+```
+
+### Monorepo Import Patterns
+```typescript
+// ✅ Use @pet/* for shared monorepo code
+import { BuilderConfig } from '@pet/domain/builder';
+import { trpc } from '@pet/api';
+import { formatPrice } from '@pet/shared/utils';
+
+// ✅ Use @/ for app-local imports
+import { Button } from '@/components/ui/button';
+import { config } from '@/lib/config';
+
+// ✅ Use relative for same directory
+import { OptionCard } from './option-card';
+```
+
+## AI Assistant Guidelines
+
+### Core Principles
+1. **Understand Before Acting** - Search codebase, read docs, analyze patterns
+2. **Execute Completely** - Finish tasks fully, verify changes, document work
+3. **Quality Over Speed** - Type safety, error handling, performance, accessibility
+4. **Continuous Learning** - Learn from feedback, adapt to patterns, improve over time
+
+### When Suggesting Code
+1. **Always follow established patterns** in the codebase
+2. **Search first** - Use codebase_search to find similar implementations
+3. **Include proper TypeScript types** - Never use `any`
+4. **Add error handling and loading states** - Every component needs them
+5. **Consider performance implications** - Memoization, code splitting, queries
+6. **Ensure accessibility compliance** - WCAG AA, keyboard navigation, ARIA
+7. **Write testable code** - Pure functions, dependency injection
+8. **Follow the "Playful Modern" design system** - Use CSS variables
+
+### Code Quality Checklist
+```typescript
+// ✅ GOOD: Complete, type-safe, with error handling
+interface Props {
+  id: string;
+  onComplete?: () => void;
+}
+
+export function MyComponent({ id, onComplete }: Props): React.ReactElement {
+  const { data, isLoading, error } = trpc.designs.byId.useQuery({ id });
+
+  if (isLoading) return <LoadingState />;
+  if (error) return <ErrorState message={error.message} />;
+  if (!data) return <EmptyState />;
+
+  return <div>{/* Implementation */}</div>;
+}
+
+// ❌ BAD: No types, no error handling, no loading states
+export function MyComponent(props) {
+  const data = trpc.designs.byId.useQuery({ id: props.id });
+  return <div>{data?.name}</div>;
+}
+```
+
+### Self-Improvement Process
+1. **Track patterns** - What gets accepted vs corrected?
+2. **Analyze corrections** - Why did the user change it?
+3. **Learn and adapt** - Apply corrected patterns going forward
+4. **Reference documentation** - Always check /docs/ folder first
+5. **Verify and improve** - Test suggestions, iterate based on feedback
+
+### Task Completion Standards
+- ✅ **Full implementation** - Not just partial solutions
+- ✅ **Working code** - Test before submitting
+- ✅ **Proper types** - Explicit TypeScript everywhere
+- ✅ **Error handling** - Try-catch, error states
+- ✅ **Documentation** - Comments, docs, examples
+- ✅ **Testing** - Unit tests where appropriate
+
+## Documentation Reference
+The project has comprehensive documentation in the `/docs` folder. **Always consult these before making changes.**
+
+### 🚨 CRITICAL: Documentation File Location
+**NEVER create .md files in the project root** except:
+- `/README.md` (project overview only)
+- `/CLAUDE.md` (AI assistant guidelines only)
+- `/CHANGELOG.md` (if needed)
+
+**ALL other documentation MUST go in `/docs/` with proper subdirectories:**
+- Setup/how-to guides → `/docs/` (e.g., HOW_TO_SETUP.md)
+- Completion/status docs → `/docs/archive/`
+- Architecture docs → `/docs/architecture/`
+- Development guides → `/docs/development/`
+- Configuration guides → `/docs/guides/`
+- Feature docs → `/docs/features/`
+- Design system → `/docs/design/`
+- Operations → `/docs/ops/`
+- API reference → `/docs/api/`
+- Troubleshooting → `/docs/troubleshooting/`
+
+### 📖 Key Documentation (Read These First)
+- **[how-to-setup.md](docs/how-to-setup.md)** - Complete setup guide for new developers
+- **[docs/README.md](docs/README.md)** - Documentation index and navigation
+
+### Architecture (System Design)
+- `/docs/architecture/architecture.md` - System design and architecture decisions
+- `/docs/architecture/component-architecture.md` - React component patterns and structure
+- `/docs/architecture/database-scaling-plan.md` - Scaling strategies
+- `/docs/architecture/3d-preview-system.md` - 3D preview rendering system
+- `/docs/architecture/hybrid-architecture-implementation.md` - Hybrid architecture
+- `/docs/architecture/microservices-architecture.md` - Microservices design
+
+### Development (Patterns & Best Practices)
+- `/docs/development/development-guide.md` - Daily workflow and best practices
+- `/docs/development/code-patterns.md` - Common code patterns with examples
+- `/docs/development/testing-guide.md` - Testing strategies and examples
+- `/docs/development/playwright-guide.md` - E2E testing with Playwright
+- `/docs/development/performance-guide.md` - Performance optimization guide
+
+### Guides (Setup & Configuration)
+- `/docs/guides/environment-setup.md` - Environment variables and configuration
+- `/docs/guides/database-setup.md` - Database configuration guide
+- `/docs/guides/api-keys.md` - API keys setup with direct links
+- `/docs/guides/trpc-usage-examples.md` - tRPC usage patterns
+- `/docs/guides/running-microservices.md` - Microservices setup
+
+### Operations (Deployment & Monitoring)
+- `/docs/ops/deploy.md` - Complete deployment procedures
+- `/docs/ops/backend-deployment.md` - Backend-specific deployment
+- `/docs/ops/database-migration-setup.md` - Database migration guide
+
+### Design System
+- `/docs/design/design-system-implementation.md` - Complete design system
+- `/docs/design/motion-guidelines.md` - Animation and motion patterns
+- `/docs/design/typography-guide.md` - Typography system
+
+### Features
+- `/docs/features/seo-implementation-guide.md` - SEO implementation details
+- `/docs/features/seo-quick-reference.md` - Quick SEO checklist
+- `/docs/features/3d-collar-customizer.md` - 3D customizer feature
+- `/docs/features/global-navigation.md` - Navigation implementation
+- `/docs/features/saved-designs-page.md` - Saved designs feature
+
+### API Reference
+- `/docs/api/api-reference.md` - Frontend API documentation
+- `/docs/api/backend-api-reference.md` - Backend API endpoints
+
+### Reference Documentation
+- `/docs/README.md` - Documentation navigation index
+- `/docs/QUICK_REFERENCE.md` - Quick command reference
+- `/docs/troubleshooting-faq.md` - Solutions to common issues
+- `/docs/troubleshooting/react-19-compatibility.md` - React 19 issues
+
+### AI Development
+- `/CLAUDE.md` - AI assistant guidelines and best practices
+- `/.cursorrules` - This file - Project-specific AI rules
+
+When answering questions or generating code:
+1. **Read documentation first** - Check /docs/ before implementing
+2. **Follow established patterns** - Reference /docs/development/code-patterns.md
+3. **Use tRPC for APIs** - Follow /docs/guides/trpc-usage-examples.md
+4. **Maintain monorepo structure** - See /docs/architecture/monorepo-organization-analysis.md
+5. **Check for similar code** - Use codebase_search before creating new
+6. **Reference component patterns** - Apply patterns from /docs/architecture/component-architecture.md
+7. **Verify type safety** - Always use explicit types, never `any`
+8. **Include error handling** - Every async operation needs try-catch
+9. **Document changes** - Update relevant docs when making architectural changes
+10. **Test thoroughly** - Follow /docs/development/testing-guide.md
+
+## Creating New Services (When User Requests)
+
+When user asks to create a new feature/service:
+
+### Decision Framework:
+
+**Frontend Feature?**
+- Standalone value (landing page) → **Micro-Frontend** (copy `apps/pet-licensing/`, 20 min)
+- Dashboard-only → **Route** in `apps/web/src/app/(dashboard)/` (5 min)
+
+**Backend Feature?**
+- High traffic/complex → **Microservice** (copy `services/builder-service/`, 15 min)
+- Simple CRUD → **Module** in `services/backend/src/modules/` (10 min)
+
+### Always:
+1. **Create domain first** - `libs/domain/src/lib/[name]/` with types, validation, utils
+2. **Use templates** - Copy from pet-licensing (frontend) or builder-service (backend)
+3. **Integrate via tRPC** - Add router in `libs/api/src/routers/`
+4. **Update navigation** - Add to dashboard if applicable
+5. **Document** - Note what was created
+
+### Quick Reference:
+- Micro-frontend guide: `/docs/guides/CREATE_NEW_MICROFRONTEND.md`
+- Microservice guide: `/docs/guides/CREATE_NEW_MICROSERVICE.md`
+- Creating services rule: `/.cursor/rules/creating-services.mdc`

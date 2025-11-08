@@ -1,0 +1,253 @@
+---
+alwaysApply: true
+---
+
+# Code Quality Standards
+
+## TypeScript Requirements
+
+### NEVER use `any` type
+```typescript
+// ❌ NEVER
+function getData(): any { ... }
+function process(data: any) { ... }
+
+// ✅ ALWAYS use proper types
+function getData(): UserData { ... }
+function process(data: UserData): ProcessedResult { ... }
+```
+
+### Explicit Types Required
+```typescript
+// ✅ ALWAYS explicit function signatures
+export function Component({ id, onUpdate }: ComponentProps): React.ReactElement {
+  // Implementation
+}
+
+// ❌ NEVER rely on inference for public APIs
+export function Component(props) {
+  // Bad!
+}
+```
+
+### Proper Type Definitions
+```typescript
+// ✅ ALWAYS use interfaces for object shapes
+interface DesignData {
+  id: string;
+  name: string | null;
+  config: BuilderConfig;
+  createdAt: Date;
+}
+
+// ✅ Use discriminated unions for states
+type LoadingState<T> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; error: Error };
+```
+
+## Component Requirements
+
+### Every Component Must Have:
+
+1. **Loading State**
+```typescript
+if (isLoading) return <LoadingState />;
+```
+
+2. **Error State**
+```typescript
+if (error) return <ErrorState message={error.message} />;
+```
+
+3. **Empty State**
+```typescript
+if (!data || data.length === 0) return <EmptyState />;
+```
+
+4. **Proper TypeScript**
+```typescript
+interface Props {
+  data: DesignData;
+  onUpdate: (id: string) => Promise<void>;
+}
+
+export function Component({ data, onUpdate }: Props): React.ReactElement {
+  // Implementation
+}
+```
+
+## Error Handling
+
+### ALWAYS wrap async operations
+```typescript
+// ✅ CORRECT
+const handleSubmit = async () => {
+  try {
+    setLoading(true);
+    await saveData();
+    setSuccess(true);
+  } catch (error) {
+    setError(error instanceof Error ? error.message : 'Unknown error');
+  } finally {
+    setLoading(false);
+  }
+};
+
+// ❌ NEVER skip error handling
+const handleSubmit = async () => {
+  await saveData(); // What if this fails?
+};
+```
+
+## Accessibility Requirements
+
+### ALWAYS include:
+- Semantic HTML elements
+- ARIA labels for interactive elements
+- Keyboard navigation support
+- Focus management
+- Proper heading hierarchy
+
+```typescript
+// ✅ CORRECT
+<button 
+  onClick={handleClick}
+  aria-label="Delete design"
+  className="focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+>
+  Delete
+</button>
+
+// ❌ WRONG
+<div onClick={handleClick}>Delete</div>
+```
+
+## Performance Rules
+
+### ALWAYS consider:
+- Unnecessary re-renders (use memo/useMemo/useCallback)
+- Code splitting (dynamic imports for heavy components)
+- Image optimization (next/image with proper sizing)
+- Database query optimization (proper indexes, pagination)
+
+```typescript
+// ✅ CORRECT - Memoize expensive operations
+const sortedData = useMemo(
+  () => data?.sort((a, b) => a.name.localeCompare(b.name)),
+  [data]
+);
+
+// ❌ WRONG - Sorts on every render
+const sortedData = data?.sort((a, b) => a.name.localeCompare(b.name));
+```
+
+## Testing Requirements
+
+### Every feature needs:
+- Unit tests for logic
+- Integration tests for workflows
+- Proper test descriptions
+- Edge case coverage
+
+```typescript
+// ✅ CORRECT test structure
+describe('BuilderState', () => {
+  it('should update selection when color is changed', () => {
+    // Arrange
+    const store = createStore();
+    
+    // Act
+    store.updateSelection({ color: 'blue' });
+    
+    // Assert
+    expect(store.selection.color).toBe('blue');
+  });
+});
+```
+
+## Documentation Requirements
+
+### ALWAYS document:
+- Complex logic with comments
+- Public APIs with JSDoc
+- Non-obvious decisions
+- Breaking changes
+
+```typescript
+/**
+ * Calculates the total price for a custom harness design
+ * 
+ * @param config - The builder configuration
+ * @param options - Additional pricing options
+ * @returns Price breakdown with itemized costs
+ * 
+ * @example
+ * const price = calculatePrice({
+ *   size: 'M',
+ *   color: 'blue',
+ *   hardware: 'gold'
+ * });
+ */
+export function calculatePrice(
+  config: BuilderConfig,
+  options?: PricingOptions
+): PriceBreakdown {
+  // Implementation
+}
+```
+
+## Build, Lint, and Type Check Requirements
+
+### ALWAYS run before committing code:
+
+**For feature development:**
+```bash
+# 1. Type check your changes
+npx nx typecheck web                    # For web app
+npx tsc -p libs/domain/tsconfig.lib.json --noEmit  # For libraries
+
+# 2. Lint your changes
+npx nx lint web                         # For web app
+npx nx lint domain                      # For libraries
+
+# 3. Build to verify production readiness
+npx nx build domain shared messaging    # Build all libraries
+NODE_ENV=production npx nx build web    # Build web app
+```
+
+**Quick verification:**
+```bash
+# Verify all libraries build
+npx nx run-many --target=build --projects=domain,shared,messaging
+
+# Verify web app builds
+cd apps/web && NODE_ENV=production npx next build
+```
+
+**What to check:**
+- ✅ No TypeScript errors in your changed files
+- ✅ No new linting errors
+- ✅ Build completes successfully
+- ✅ No new warnings introduced
+
+### Build Workflow Integration
+
+**Before starting feature:**
+1. Ensure current codebase builds: `npm run build` (or check specific projects)
+2. Understand which projects your feature touches
+
+**During development:**
+1. Run type checking frequently: `npx nx typecheck web`
+2. Fix type errors immediately (don't accumulate)
+3. Keep linter happy (address warnings as you go)
+
+**Before pull request:**
+1. Run full build: `npx nx build domain shared messaging web`
+2. Fix any build errors introduced
+3. Verify no new warnings
+4. Update tests if needed
+
+**See documentation:** `/docs/development/dev-workflow.md` for complete workflow

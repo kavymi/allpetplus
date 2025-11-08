@@ -1,0 +1,41 @@
+services:
+  # Development databases and services only
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=pet_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pet-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - pet-network
+
+  # Optional: Add development tools
+  adminer:
+    image: adminer
+    ports:
+      - "8081:8080"
+    networks:
+      - pet-network
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  pet-network:
+    driver: bridge

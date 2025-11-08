@@ -1,0 +1,57 @@
+# Fly.io deployment configuration for Builder Service
+
+app = "harness-builder-prod"
+primary_region = "sjc"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "4002"
+  NODE_ENV = "production"
+
+[[services]]
+  internal_port = 4002
+  protocol = "tcp"
+  
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+    force_https = true
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 250
+    soft_limit = 200
+
+  [[services.http_checks]]
+    interval = "15s"
+    timeout = "10s"
+    grace_period = "30s"
+    method = "GET"
+    path = "/healthz"
+
+[deploy]
+  strategy = "rolling"
+  
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+
+[auto_scaling]
+  min_count = 2
+  max_count = 10
+  
+  [[auto_scaling.metrics]]
+    type = "cpu"
+    target = 70
+
+  [[auto_scaling.metrics]]
+    type = "requests"
+    target = 1000
+

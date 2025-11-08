@@ -1,0 +1,212 @@
+---
+alwaysApply: true
+---
+
+# Component Patterns & Standards
+
+## Component Template
+
+### ALWAYS use this template for new components:
+
+```typescript
+'use client'; // Only if needed for interactivity
+
+import { useState } from 'react';
+import { trpc } from '@/lib/trpc';
+import { Button } from '@/components/ui/button';
+import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorState } from '@/components/ui/error-state';
+import { EmptyState } from '@/components/ui/empty-state';
+
+interface ComponentProps {
+  id: string;
+  onComplete?: () => void;
+}
+
+export function Component({ id, onComplete }: ComponentProps): React.ReactElement {
+  // 1. Data fetching with tRPC
+  const { data, isLoading, error } = trpc.designs.byId.useQuery({ id });
+
+  // 2. Loading state
+  if (isLoading) return <LoadingState message="Loading design..." />;
+
+  // 3. Error state
+  if (error) return <ErrorState message={error.message} />;
+
+  // 4. Empty state
+  if (!data) return <EmptyState message="Design not found" />;
+
+  // 5. Success state
+  return (
+    <div className="p-4 rounded-lg bg-[var(--color-surface)]">
+      {/* Implementation */}
+    </div>
+  );
+}
+```
+
+## Import Order
+
+ALWAYS follow this order:
+```typescript
+// 1. React/Next imports
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+// 2. External packages
+import { motion } from 'framer-motion';
+import { create } from 'zustand';
+
+// 3. Monorepo imports (@pet/*)
+import { trpc } from '@pet/api';
+import { formatPrice } from '@pet/shared/utils';
+
+// 4. App-local imports (@/)
+import { Button } from '@/components/ui/button';
+import { config } from '@/lib/config';
+
+// 5. Relative imports
+import { OptionCard } from './option-card';
+
+// 6. Types
+import type { BuilderConfig } from './types';
+```
+
+## Styling with Tailwind CSS v4
+
+### ALWAYS use CSS variables for colors
+```typescript
+// ✅ CORRECT
+className="bg-[var(--color-surface)] text-[var(--color-foreground)]"
+className="border-[var(--color-border-strong)]"
+
+// ❌ WRONG - Don't use arbitrary colors
+className="bg-gray-100 text-black"
+```
+
+### Responsive Design (Mobile-First)
+```typescript
+// ✅ CORRECT - Mobile first, then larger screens
+className="px-4 sm:px-6 lg:px-8"
+className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+
+// ❌ WRONG - Desktop first
+className="px-8 md:px-6 sm:px-4"
+```
+
+## State Management with Zustand
+
+### ALWAYS use TypeScript interfaces
+```typescript
+interface BuilderStore {
+  selection: BuilderSelection;
+  history: BuilderSelection[];
+  updateSelection: (updates: Partial<BuilderSelection>) => void;
+  undo: () => void;
+  redo: () => void;
+}
+
+export const useBuilderStore = create<BuilderStore>()(
+  immer((set) => ({
+    selection: getDefaultSelection(),
+    history: [],
+    updateSelection: (updates) => set((state) => {
+      state.history.push({ ...state.selection });
+      Object.assign(state.selection, updates);
+    }),
+    undo: () => set((state) => {
+      const prev = state.history.pop();
+      if (prev) state.selection = prev;
+    }),
+    redo: () => { /* ... */ },
+  }))
+);
+```
+
+## Component Organization
+
+```
+apps/web/src/components/
+├── ui/                  # Reusable UI primitives
+│   ├── button.tsx
+│   ├── card.tsx
+│   └── modal.tsx
+│
+├── builder/             # Builder-specific components
+│   ├── builder-shell.tsx
+│   ├── options-pane.tsx
+│   └── use-builder.ts
+│
+├── cart/                # Cart-specific components
+├── catalog/             # Catalog-specific components
+│
+└── examples/            # Example implementations
+    └── trpc-designs-list.tsx
+```
+
+## Never Do This
+
+```typescript
+// ❌ No types
+export function Component(props) { ... }
+
+// ❌ No error handling
+const handleClick = async () => {
+  await saveData();
+};
+
+// ❌ No loading state
+const { data } = trpc.designs.list.useQuery();
+return <div>{data.map(...)}</div>;
+
+// ❌ Using `any`
+const [state, setState] = useState<any>();
+
+// ❌ Missing accessibility
+<div onClick={handleClick}>Click me</div>
+```
+
+## Animation & Motion
+
+### ALWAYS respect reduced motion
+```typescript
+// ✅ CORRECT
+<motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.3 }}
+  style={{
+    '--motion-reduce': 'var(--motion-reduce-ok)',
+  } as React.CSSProperties}
+>
+  {children}
+</motion.div>
+
+// Check in CSS
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+## Best Practices Summary
+
+✅ **DO:**
+- Use tRPC for API calls
+- Include all UI states
+- Handle all errors
+- Use explicit types
+- Follow existing patterns
+- Write accessible markup
+- Document complex logic
+
+❌ **DON'T:**
+- Use `any` types
+- Skip error handling
+- Ignore loading states
+- Use manual fetch()
+- Break type safety
+- Forget accessibility
+- Leave code undocumented
