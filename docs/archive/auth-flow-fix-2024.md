@@ -253,3 +253,6 @@ Users can now:
 - Sign in/up successfully when Clerk configured
 - Access protected routes after authentication
 
+
+
+

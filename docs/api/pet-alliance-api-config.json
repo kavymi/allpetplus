@@ -1,0 +1,684 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pet Solutions Alliance Service Catalog Configuration",
+  "version": "1.0.0",
+  "lastUpdated": "2025-11-16",
+  "description": "Comprehensive service catalog configuration for all 12 divisions",
+  
+  "divisions": [
+    {
+      "id": "acquisition",
+      "name": "Acquisition CO",
+      "legalName": "Newburgh & Wellness Services, Inc.",
+      "description": "Human medical and wellness services for pet caregivers",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/acquisition",
+      "services": [
+        {
+          "id": "medical-subscription",
+          "name": "Medical Subscription Plans",
+          "category": "subscription",
+          "pricing": {
+            "basic": {"monthly": 49, "currency": "USD"},
+            "plus": {"monthly": 99, "currency": "USD"},
+            "premium": {"monthly": 199, "currency": "USD"},
+            "family": {"monthly": 299, "currency": "USD"}
+          },
+          "features": {
+            "basic": ["Unlimited telemedicine", "Prescription services", "Basic mental health"],
+            "plus": ["Everything in Basic", "2 in-person visits/year", "Priority scheduling"],
+            "premium": ["Everything in Plus", "4 in-person visits/year", "Dedicated care coordinator"],
+            "family": ["2 adults covered", "All Premium benefits", "Shared health portal"]
+          },
+          "enabled": true
+        },
+        {
+          "id": "telemedicine",
+          "name": "Telemedicine Consultations",
+          "category": "appointment",
+          "pricing": {
+            "perSession": 75
+          },
+          "duration": 30,
+          "enabled": true
+        }
+      ],
+      "states": ["CA", "TX", "NY"],
+      "targetLaunch": "2026-Q1"
+    },
+    {
+      "id": "licensure",
+      "name": "Licensure & Identification CO",
+      "legalName": "AP Plus ID, Inc.",
+      "description": "Pet registration, certification, and global identity management",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/licensure",
+      "services": [
+        {
+          "id": "pet-registration",
+          "name": "National Pet Registry",
+          "category": "registration",
+          "pricing": {
+            "registrationFee": 25,
+            "renewalFee": 0
+          },
+          "features": ["Lifetime registration", "Blockchain-backed", "Digital ID card", "Lost pet network"],
+          "enabled": true
+        },
+        {
+          "id": "membership",
+          "name": "Membership Plans",
+          "category": "subscription",
+          "pricing": {
+            "free": {"monthly": 0},
+            "basic": {"monthly": 4.99, "perPet": true},
+            "plus": {"monthly": 9.99, "perPet": true},
+            "premium": {"monthly": 19.99, "perPet": true},
+            "family": {"monthly": 29.99, "maxPets": 5}
+          },
+          "benefits": {
+            "free": ["Basic pet profile", "Digital ID", "Local lost pet alerts"],
+            "basic": ["National registry", "Physical ID card", "24/7 hotline"],
+            "plus": ["Blockchain records", "Travel assistance", "10% discounts"],
+            "premium": ["Emergency vet assistance ($500/yr)", "Concierge services", "20% discounts"]
+          },
+          "enabled": true
+        },
+        {
+          "id": "certifications",
+          "name": "Pet Certifications",
+          "category": "certification",
+          "types": ["service-dog", "esa", "therapy-dog", "good-citizen"],
+          "pricing": {
+            "issuanceFee": {"min": 25, "max": 50}
+          },
+          "enabled": true
+        }
+      ],
+      "integrations": ["blockchain", "apple-wallet", "google-wallet"]
+    },
+    {
+      "id": "content-media",
+      "name": "Content & Media CO",
+      "legalName": "AP Plus Media, Inc.",
+      "description": "Pet entertainment, education, and influencer marketing",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/media",
+      "services": [
+        {
+          "id": "subscription-content",
+          "name": "Premium Content Subscription",
+          "category": "subscription",
+          "pricing": {
+            "adFreePodcasts": {"monthly": 4.99},
+            "exclusiveVideos": {"monthly": 7.99},
+            "allAccess": {"monthly": 12.99}
+          },
+          "enabled": true
+        },
+        {
+          "id": "digital-products",
+          "name": "Digital Products",
+          "category": "product",
+          "items": [
+            {"type": "ebook", "priceRange": {"min": 9.99, "max": 39.99}},
+            {"type": "course", "priceRange": {"min": 49, "max": 199}},
+            {"type": "breed-guide", "price": 29.99}
+          ],
+          "enabled": true
+        }
+      ],
+      "platforms": ["youtube", "instagram", "tiktok", "podcast", "blog"]
+    },
+    {
+      "id": "products",
+      "name": "Products CO",
+      "legalName": "AP Plus Products, Inc.",
+      "description": "E-commerce platform for custom pet gear",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/products",
+      "services": [
+        {
+          "id": "ecommerce",
+          "name": "Pet Products E-commerce",
+          "category": "product",
+          "categories": [
+            {
+              "id": "leashes",
+              "name": "Leashes",
+              "priceRange": {"min": 19.99, "max": 129.99},
+              "customizable": true
+            },
+            {
+              "id": "collars",
+              "name": "Collars",
+              "priceRange": {"min": 14.99, "max": 99.99},
+              "customizable": true
+            },
+            {
+              "id": "harnesses",
+              "name": "Harnesses",
+              "priceRange": {"min": 29.99, "max": 199.99},
+              "customizable": true,
+              "custom3DBuilder": true
+            },
+            {
+              "id": "apparel",
+              "name": "Clothing & Apparel",
+              "priceRange": {"min": 24.99, "max": 99.99}
+            },
+            {
+              "id": "accessories",
+              "name": "Accessories",
+              "priceRange": {"min": 8.99, "max": 49.99}
+            }
+          ],
+          "enabled": true
+        },
+        {
+          "id": "subscription-boxes",
+          "name": "Monthly Subscription Boxes",
+          "category": "subscription",
+          "pricing": {
+            "essential": {"monthly": 39.99},
+            "deluxe": {"monthly": 79.99}
+          },
+          "enabled": true
+        }
+      ],
+      "shipping": {
+        "standard": "2-5 business days",
+        "express": "1-2 business days",
+        "freeShippingThreshold": 50
+      }
+    },
+    {
+      "id": "healthcare",
+      "name": "Healthcare CO",
+      "legalName": "AP Plus Insurance Co",
+      "description": "Comprehensive pet insurance and wellness plans",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/healthcare",
+      "services": [
+        {
+          "id": "insurance",
+          "name": "Pet Insurance Plans",
+          "category": "insurance",
+          "plans": {
+            "bronze": {
+              "monthly": {"dog": 29, "cat": 19},
+              "annualLimit": 5000,
+              "deductible": 500,
+              "reimbursement": 70
+            },
+            "silver": {
+              "monthly": {"dog": 49, "cat": 35},
+              "annualLimit": 10000,
+              "deductible": 250,
+              "reimbursement": 80
+            },
+            "gold": {
+              "monthly": {"dog": 79, "cat": 59},
+              "annualLimit": 20000,
+              "deductible": 100,
+              "reimbursement": 90
+            },
+            "platinum": {
+              "monthly": {"dog": 129, "cat": 99},
+              "annualLimit": "unlimited",
+              "deductible": 0,
+              "reimbursement": 100
+            }
+          },
+          "addOns": [
+            {"name": "Dental Coverage", "monthly": 15},
+            {"name": "Travel Insurance", "monthly": 10},
+            {"name": "Prescription Drugs", "monthly": 20}
+          ],
+          "enabled": true
+        },
+        {
+          "id": "wellness",
+          "name": "Wellness Plans",
+          "category": "subscription",
+          "pricing": {
+            "essentials": {"monthly": 19.99},
+            "plus": {"monthly": 39.99},
+            "premium": {"monthly": 59.99}
+          },
+          "enabled": true
+        }
+      ],
+      "claimsProcessing": {
+        "standardTime": "3-5 days",
+        "expressTime": "24-48 hours",
+        "submissionMethods": ["app", "email", "portal"]
+      }
+    },
+    {
+      "id": "training",
+      "name": "Training CO",
+      "legalName": "AP Plus Training, Inc.",
+      "description": "Professional pet training and handler education",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/training",
+      "services": [
+        {
+          "id": "training-programs",
+          "name": "Training Programs",
+          "category": "education",
+          "programs": [
+            {
+              "type": "puppy-foundation",
+              "duration": "6 weeks",
+              "price": 299,
+              "delivery": "group"
+            },
+            {
+              "type": "basic-obedience",
+              "duration": "8 weeks",
+              "price": 399,
+              "delivery": "group"
+            },
+            {
+              "type": "advanced-obedience",
+              "duration": "8 weeks",
+              "price": 499,
+              "delivery": "group"
+            },
+            {
+              "type": "service-dog",
+              "duration": "6-12 months",
+              "priceRange": {"min": 5000, "max": 15000},
+              "delivery": "private"
+            }
+          ],
+          "privateTraining": {
+            "hourlyRate": {"min": 100, "max": 200}
+          },
+          "enabled": true
+        },
+        {
+          "id": "online-courses",
+          "name": "Online Training Courses",
+          "category": "education",
+          "pricing": {
+            "individual": {"min": 49, "max": 299},
+            "subscription": {"monthly": 29, "annual": 299}
+          },
+          "enabled": true
+        },
+        {
+          "id": "certifications",
+          "name": "Professional Certifications",
+          "category": "certification",
+          "types": [
+            {"name": "Pet CPR", "price": 89},
+            {"name": "Handler Certification", "priceRange": {"min": 149, "max": 199}},
+            {"name": "Trainer Certification", "price": 2800}
+          ],
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "food",
+      "name": "Pet Food CO",
+      "legalName": "AP Plus Foods, Inc.",
+      "description": "Custom meal plans and nutrition powered by AI",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/food",
+      "services": [
+        {
+          "id": "meal-subscriptions",
+          "name": "Custom Meal Plans",
+          "category": "subscription",
+          "mealTypes": ["fresh", "dry", "raw", "freeze-dried"],
+          "pricing": {
+            "small": {"dailyRange": {"min": 2, "max": 4}},
+            "medium": {"dailyRange": {"min": 4, "max": 7}},
+            "large": {"dailyRange": {"min": 7, "max": 12}},
+            "cat": {"dailyRange": {"min": 1.5, "max": 3}}
+          },
+          "deliveryFrequency": ["weekly", "bi-weekly", "monthly"],
+          "enabled": true
+        },
+        {
+          "id": "supplements",
+          "name": "Custom Supplement Plans",
+          "category": "subscription",
+          "pricing": {
+            "monthlyRange": {"min": 30, "max": 80}
+          },
+          "types": ["joint", "digestive", "skin-coat", "immune", "cognitive"],
+          "enabled": true
+        },
+        {
+          "id": "health-scorecard",
+          "name": "AI-Powered Health Scorecard",
+          "category": "service",
+          "pricing": {
+            "free": "for food subscribers",
+            "standalone": 29
+          },
+          "frequency": "monthly",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "ai-tech",
+      "name": "AI Plus Tech CO",
+      "legalName": "AP Plus Tech, Inc.",
+      "description": "DNA testing, AI/ML infrastructure, and pet technology",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/tech",
+      "services": [
+        {
+          "id": "dna-testing",
+          "name": "DNA Testing Kits",
+          "category": "product",
+          "kits": [
+            {"type": "breed-id", "price": 79.99},
+            {"type": "health-wellness", "price": 149.99},
+            {"type": "ultimate", "price": 199.99}
+          ],
+          "turnaroundTime": "2-3 weeks",
+          "enabled": true
+        },
+        {
+          "id": "health-screening",
+          "name": "Health Screening Kits",
+          "category": "product",
+          "kits": [
+            {"type": "allergen", "price": 89.99},
+            {"type": "comprehensive", "price": 299.99},
+            {"type": "cancer-screening", "price": 399.99}
+          ],
+          "enabled": true
+        },
+        {
+          "id": "api-services",
+          "name": "API Platform (B2B)",
+          "category": "b2b",
+          "endpoints": [
+            "Health Prediction API",
+            "Nutrition Optimization API",
+            "Breed Identification API",
+            "Behavior Analysis API"
+          ],
+          "pricing": {
+            "model": "per-request",
+            "rates": {"min": 0.05, "max": 1.00}
+          },
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "grooming",
+      "name": "Grooming CO",
+      "legalName": "AP Plus Grooming, Inc.",
+      "description": "Professional grooming services and products",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/grooming",
+      "services": [
+        {
+          "id": "grooming-services",
+          "name": "Salon Grooming Services",
+          "category": "appointment",
+          "services": [
+            {
+              "type": "bath-brush",
+              "duration": "45-60 min",
+              "priceRange": {"min": 35, "max": 75}
+            },
+            {
+              "type": "full-groom",
+              "duration": "90-150 min",
+              "priceRange": {"min": 55, "max": 125}
+            },
+            {
+              "type": "breed-specific",
+              "duration": "120-180 min",
+              "priceRange": {"min": 75, "max": 150}
+            }
+          ],
+          "enabled": true
+        },
+        {
+          "id": "mobile-grooming",
+          "name": "Mobile Grooming",
+          "category": "appointment",
+          "priceRange": {"min": 50, "max": 150},
+          "travelFee": 25,
+          "enabled": true
+        },
+        {
+          "id": "groom-club",
+          "name": "Groom Club Subscriptions",
+          "category": "subscription",
+          "pricing": {
+            "basic": {"small": 49, "large": 79},
+            "premium": {"small": 89, "large": 139},
+            "platinum": {"small": 149, "large": 229}
+          },
+          "enabled": true
+        },
+        {
+          "id": "grooming-products",
+          "name": "Grooming Products",
+          "category": "product",
+          "categories": ["shampoo", "perfume", "wipes", "tools"],
+          "priceRange": {"min": 9.99, "max": 79.99},
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "care-services",
+      "name": "Care Services CO",
+      "legalName": "AP Plus Care, Inc.",
+      "description": "Day care, boarding, and transportation services",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/care",
+      "services": [
+        {
+          "id": "daycare",
+          "name": "Doggy Day Care",
+          "category": "appointment",
+          "options": [
+            {"type": "half-day", "duration": "4-6 hours", "priceRange": {"min": 25, "max": 35}},
+            {"type": "full-day", "duration": "8-10 hours", "priceRange": {"min": 40, "max": 55}},
+            {"type": "extended", "duration": "10-12 hours", "priceRange": {"min": 55, "max": 70}}
+          ],
+          "packages": [
+            {"name": "5-day-weekly", "priceRange": {"min": 160, "max": 220}, "discount": 20},
+            {"name": "unlimited-monthly", "priceRange": {"min": 480, "max": 660}, "discount": 30}
+          ],
+          "enabled": true
+        },
+        {
+          "id": "boarding",
+          "name": "Pet Boarding",
+          "category": "reservation",
+          "accommodations": [
+            {"type": "standard", "priceRange": {"min": 45, "max": 65}},
+            {"type": "deluxe", "priceRange": {"min": 65, "max": 95}},
+            {"type": "luxury", "priceRange": {"min": 95, "max": 145}}
+          ],
+          "discounts": {
+            "weekly": 15,
+            "monthly": 25
+          },
+          "enabled": true
+        },
+        {
+          "id": "pet-taxi",
+          "name": "Pet Transportation",
+          "category": "service",
+          "pricing": {
+            "local": {"base": 25, "perMile": null},
+            "longDistance": {"perMile": 2.5},
+            "airport": {"pickup": 45, "dropoff": 45}
+          },
+          "enabled": true
+        },
+        {
+          "id": "dog-walking",
+          "name": "Dog Walking Services",
+          "category": "service",
+          "options": [
+            {"duration": 20, "price": {"min": 20, "max": 25}},
+            {"duration": 30, "price": {"min": 25, "max": 35}},
+            {"duration": 60, "price": {"min": 40, "max": 55}}
+          ],
+          "packages": [
+            {"walks": 5, "discount": 15},
+            {"walks": 10, "discount": 15},
+            {"walks": 20, "discount": 20}
+          ],
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "foundation",
+      "name": "Foundation",
+      "legalName": "AP Plus Philanthropic, Inc.",
+      "entityType": "501(c)(3)",
+      "description": "Animal welfare and education programs",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/foundation",
+      "services": [
+        {
+          "id": "grants",
+          "name": "Grant Programs",
+          "category": "grant",
+          "types": [
+            {"name": "Education Grants", "range": {"min": 5000, "max": 25000}},
+            {"name": "Welfare Grants", "range": {"min": 10000, "max": 50000}},
+            {"name": "Innovation Grants", "range": {"min": 25000, "max": 100000}}
+          ],
+          "applicationCycles": "quarterly",
+          "enabled": true
+        },
+        {
+          "id": "donations",
+          "name": "Donation Programs",
+          "category": "donation",
+          "methods": ["one-time", "recurring", "memorial", "tribute"],
+          "taxDeductible": true,
+          "enabled": true
+        },
+        {
+          "id": "volunteer",
+          "name": "Volunteer Programs",
+          "category": "volunteer",
+          "opportunities": ["shelter", "education", "events", "foster"],
+          "enabled": true
+        }
+      ],
+      "programs": {
+        "adoption": "Clear the Shelters, adoption events",
+        "wellness": "Free/low-cost vet care, spay/neuter",
+        "education": "Workshops, school programs"
+      }
+    },
+    {
+      "id": "real-estate",
+      "name": "Real Estate CO",
+      "legalName": "AP Plus Real Estate Inc.",
+      "description": "Property acquisition, development, and facility management",
+      "enabled": true,
+      "apiEndpoint": "/api/v1/real-estate",
+      "services": [
+        {
+          "id": "property-management",
+          "name": "Facility Management Services",
+          "category": "b2b",
+          "clientType": "internal",
+          "services": [
+            "Maintenance & Operations",
+            "Utilities Management",
+            "Security",
+            "Landscaping",
+            "Compliance"
+          ],
+          "pricing": {
+            "model": "cost-plus",
+            "markup": 10
+          },
+          "enabled": true
+        },
+        {
+          "id": "franchise",
+          "name": "Franchise Opportunities",
+          "category": "franchise",
+          "types": ["daycare", "boarding", "grooming", "training"],
+          "fees": {
+            "initial": {"min": 50000, "max": 150000},
+            "royaltyRate": {"min": 6, "max": 8},
+            "marketingFee": 2
+          },
+          "enabled": false,
+          "targetLaunch": "2027-Q1"
+        }
+      ]
+    }
+  ],
+  
+  "featureFlags": {
+    "allianceCrossSell": true,
+    "bundledDiscounts": true,
+    "loyaltyProgram": true,
+    "multiPetHousehold": true,
+    "subscriptionPause": true,
+    "autoRenewal": true,
+    "referralProgram": true,
+    "giftCards": false
+  },
+  
+  "geographicAvailability": {
+    "usa": {
+      "nationwide": ["licensure", "products", "content-media", "ai-tech"],
+      "limitedStates": {
+        "acquisition": ["CA", "TX", "NY"],
+        "healthcare": "all",
+        "training": "expanding",
+        "food": "all",
+        "grooming": "top-50-metros",
+        "care-services": "top-50-metros"
+      }
+    },
+    "international": {
+      "canada": {"planned": "2027-Q1", "divisions": ["licensure", "products", "food"]},
+      "uk": {"planned": "2027-Q2", "divisions": ["licensure", "products"]},
+      "mexico": {"manufacturing": true}
+    }
+  },
+  
+  "pricingTiers": {
+    "membershipDiscounts": {
+      "basic": 5,
+      "plus": 10,
+      "premium": 15,
+      "family": 20
+    },
+    "multiPetDiscounts": {
+      "2pets": 10,
+      "3+pets": 15
+    },
+    "annualPrepayDiscount": 10
+  },
+  
+  "integrationEndpoints": {
+    "authentication": "/api/v1/auth",
+    "petProfile": "/api/v1/core/pets",
+    "ownerProfile": "/api/v1/core/owners",
+    "crossDivisionSync": "/api/v1/sync",
+    "analytics": "/api/v1/analytics",
+    "webhooks": "/api/v1/webhooks"
+  }
+}
+
