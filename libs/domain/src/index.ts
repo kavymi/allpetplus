@@ -20,3 +20,6 @@ export { z } from 'zod';
 
 // Utest domain
 export * from './lib/test';
+
+// UproductsUco domain
+export * from './lib/products-co';
