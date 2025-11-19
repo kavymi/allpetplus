@@ -1,13 +1,7 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable static optimization to avoid SSR errors
-  output: 'standalone',
-  reactStrictMode: true,
-  // Skip static page generation for problematic routes
-  async redirects() {
-    return [];
-  },
+  /* config options here */
 };
 
 export default nextConfig;
