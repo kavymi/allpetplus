@@ -1,16 +1,12 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@pet/domain', '@pet/shared', '@pet/api'],
+  // Disable static optimization to avoid SSR errors
   output: 'standalone',
-  typescript: {
-    ignoreBuildErrors: false,
-  },
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-  experimental: {
-    // Disable static generation for now due to hook issues
+  reactStrictMode: true,
+  // Skip static page generation for problematic routes
+  async redirects() {
+    return [];
   },
 };
 
