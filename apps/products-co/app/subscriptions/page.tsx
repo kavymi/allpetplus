@@ -41,16 +41,16 @@ const SUBSCRIPTION_TIERS = [
 
 export default function SubscriptionsPage(): React.ReactElement {
   return (
-    <div className="min-h-screen bg-[var(--color-background)]">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
       {/* Hero */}
-      <section className="py-20 bg-gradient-to-br from-[var(--color-primary)]/10 via-[var(--color-background)] to-[var(--color-primary)]/5">
+      <section className="py-16">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-6">📦</div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-[var(--color-foreground)]">
+          <div className="text-5xl mb-4">📦</div>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-foreground)]">
             Monthly Subscription Boxes
           </h1>
-          <p className="text-xl text-[var(--color-foreground-secondary)] max-w-2xl mx-auto">
-            Curated treats, toys, and gear delivered to your door every month. Cancel anytime.
+          <p className="text-lg text-[var(--color-foreground-secondary)] max-w-xl mx-auto">
+            Curated treats, toys, and gear delivered every month. Cancel anytime.
           </p>
         </div>
       </section>
@@ -58,35 +58,37 @@ export default function SubscriptionsPage(): React.ReactElement {
       {/* Pricing Cards */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {SUBSCRIPTION_TIERS.map((tier) => (
               <div
                 key={tier.id}
-                className="relative rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] p-8 hover:border-[var(--color-primary)] transition-all hover:shadow-xl"
+                className="relative rounded-xl border border-[var(--color-border)] bg-white p-6 hover:border-[var(--color-primary)] hover:shadow-lg transition-all"
               >
                 {/* Badge */}
                 {tier.badge && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1 bg-[var(--color-primary)] text-white rounded-full text-sm font-semibold">
+                  <div className="absolute -top-3 right-6">
+                    <span className="px-3 py-1 bg-[var(--color-primary)] text-white rounded-full text-xs font-semibold">
                       {tier.badge}
                     </span>
                   </div>
                 )}
 
-                {/* Icon */}
-                <div className="text-5xl mb-4">{tier.icon}</div>
-
-                {/* Title */}
-                <h2 className="text-2xl font-bold mb-2 text-[var(--color-foreground)]">
-                  {tier.name}
-                </h2>
-                <p className="text-[var(--color-foreground-secondary)] mb-6">
-                  {tier.description}
-                </p>
+                {/* Icon & Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="text-3xl">{tier.icon}</div>
+                  <div>
+                    <h2 className="text-xl font-bold text-[var(--color-foreground)]">
+                      {tier.name}
+                    </h2>
+                    <p className="text-sm text-[var(--color-foreground-secondary)]">
+                      {tier.description}
+                    </p>
+                  </div>
+                </div>
 
                 {/* Pricing */}
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-[var(--color-primary)]">
+                <div className="mb-5">
+                  <span className="text-3xl font-bold text-[var(--color-primary)]">
                     ${tier.price}
                   </span>
                   <span className="text-[var(--color-foreground-secondary)]">
@@ -95,10 +97,10 @@ export default function SubscriptionsPage(): React.ReactElement {
                 </div>
 
                 {/* Features */}
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-2 mb-6">
                   {tier.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="text-green-500 mt-1">✓</span>
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <span className="text-green-500 text-lg">✓</span>
                       <span className="text-[var(--color-foreground-secondary)]">{feature}</span>
                     </li>
                   ))}
@@ -108,11 +110,11 @@ export default function SubscriptionsPage(): React.ReactElement {
                 <Link
                   href={`/subscriptions/${tier.id}`}
                   className={`
-                    block w-full px-6 py-3 rounded-xl font-semibold text-center transition-all
+                    block w-full px-5 py-3 rounded-lg font-semibold text-center transition-all text-sm
                     ${
                       tier.badge
-                        ? 'bg-[var(--color-primary)] text-white hover:opacity-90'
-                        : 'border-2 border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white'
+                        ? 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-secondary)]'
+                        : 'border border-[var(--color-border)] text-[var(--color-foreground)] hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)]'
                     }
                   `}
                 >

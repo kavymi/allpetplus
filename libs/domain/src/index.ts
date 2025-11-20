@@ -22,4 +22,4 @@ export { z } from 'zod';
 export * from './lib/test';
 
 // UproductsUco domain
-export * from './lib/products-co';
+export * as ProductsCo from './lib/products-co';

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "outDir": "../../dist/libs/ui",
+    "declaration": true,
+    "types": ["node", "react", "react-dom"]
+  },
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
+

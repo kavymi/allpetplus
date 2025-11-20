@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import React from 'react';
+import { Footer } from '@pet/ui';
 
 export const Route = createFileRoute('/')({
   component: IndexComponent,
@@ -93,14 +94,13 @@ function IndexComponent(): React.ReactElement {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-8">
-        <div className="container mx-auto px-4 text-center text-gray-600">
-          <p>© 2025 All Pet Plus Pet Licensing. All rights reserved.</p>
-          <Link to="/" className="text-blue-600 hover:underline mt-2 inline-block">
-            Back to All Pet Plus →
+      <Footer
+        LinkComponent={({ href, children, className }) => (
+          <Link to={href} className={className}>
+            {children}
           </Link>
-        </div>
-      </footer>
+        )}
+      />
     </div>
   );
 }
@@ -122,4 +122,5 @@ function FeatureCard({
     </div>
   );
 }
+
 

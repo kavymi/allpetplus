@@ -4,28 +4,7 @@
  */
 
 import { router, protectedProcedure, publicProcedure } from '../trpc';
-import {
-  // Products
-  productListSchema,
-  productByIdSchema,
-  productBySlugSchema,
-  // Designs
-  createDesignSchema,
-  updateDesignSchema,
-  designIdSchema,
-  // Subscriptions
-  createSubscriptionSchema,
-  updateSubscriptionSchema,
-  subscriptionIdSchema,
-  // Orders
-  orderListSchema,
-  orderIdSchema,
-  createOrderSchema,
-  // Cart
-  addToCartSchema,
-  updateCartItemSchema,
-  removeFromCartSchema,
-} from '@pet/domain';
+import { ProductsCo } from '@pet/domain';
 
 export const productsCoRouter = router({
   // ============================
@@ -36,7 +15,7 @@ export const productsCoRouter = router({
    * List all products with optional filtering
    */
   listProducts: publicProcedure
-    .input(productListSchema)
+    .input(ProductsCo.productListSchema)
     .query(async ({ input }) => {
       // TODO: Implement with Shopify integration
       // For now, return mock data
@@ -51,7 +30,7 @@ export const productsCoRouter = router({
    * Get product by ID
    */
   getProductById: publicProcedure
-    .input(productByIdSchema)
+    .input(ProductsCo.productByIdSchema)
     .query(async ({ input }) => {
       // TODO: Fetch from Shopify or database
       return null;
@@ -61,7 +40,7 @@ export const productsCoRouter = router({
    * Get product by slug
    */
   getProductBySlug: publicProcedure
-    .input(productBySlugSchema)
+    .input(ProductsCo.productBySlugSchema)
     .query(async ({ input }) => {
       // TODO: Fetch from Shopify or database
       return null;
@@ -83,7 +62,7 @@ export const productsCoRouter = router({
    * Get design by ID
    */
   getDesignById: protectedProcedure
-    .input(designIdSchema)
+    .input(ProductsCo.designIdSchema)
     .query(async ({ ctx, input }) => {
       // TODO: Fetch from database and verify ownership
       return null;
@@ -93,7 +72,7 @@ export const productsCoRouter = router({
    * Save a new custom design
    */
   saveDesign: protectedProcedure
-    .input(createDesignSchema)
+    .input(ProductsCo.createDesignSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Save to database with userId = ctx.userId
       // Generate preview image
@@ -111,7 +90,7 @@ export const productsCoRouter = router({
    * Update an existing design
    */
   updateDesign: protectedProcedure
-    .input(updateDesignSchema)
+    .input(ProductsCo.updateDesignSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Update in database and verify ownership
       return { id: input.id, success: true };
@@ -121,7 +100,7 @@ export const productsCoRouter = router({
    * Delete a design
    */
   deleteDesign: protectedProcedure
-    .input(designIdSchema)
+    .input(ProductsCo.designIdSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Delete from database and verify ownership
       return { success: true };
@@ -135,7 +114,7 @@ export const productsCoRouter = router({
    * List orders for current user
    */
   listMyOrders: protectedProcedure
-    .input(orderListSchema)
+    .input(ProductsCo.orderListSchema)
     .query(async ({ ctx, input }) => {
       // TODO: Fetch from OrderMeta table where userId = ctx.userId
       return {
@@ -149,7 +128,7 @@ export const productsCoRouter = router({
    * Get order by ID
    */
   getOrderById: protectedProcedure
-    .input(orderIdSchema)
+    .input(ProductsCo.orderIdSchema)
     .query(async ({ ctx, input }) => {
       // TODO: Fetch from database and verify ownership
       return null;
@@ -159,7 +138,7 @@ export const productsCoRouter = router({
    * Create order (typically happens via Shopify checkout)
    */
   createOrder: protectedProcedure
-    .input(createOrderSchema)
+    .input(ProductsCo.createOrderSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Create draft order in Shopify
       // Return checkout URL
@@ -214,7 +193,7 @@ export const productsCoRouter = router({
    * Create a subscription
    */
   createSubscription: protectedProcedure
-    .input(createSubscriptionSchema)
+    .input(ProductsCo.createSubscriptionSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Create in Shopify/Recharge
       // Save preferences to database
@@ -224,6 +203,7 @@ export const productsCoRouter = router({
         userId: ctx.userId,
         status: 'ACTIVE' as const,
         createdAt: new Date(),
+        updatedAt: new Date(),
       };
     }),
 
@@ -231,7 +211,7 @@ export const productsCoRouter = router({
    * Update subscription preferences or status
    */
   updateSubscription: protectedProcedure
-    .input(updateSubscriptionSchema)
+    .input(ProductsCo.updateSubscriptionSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Update in database and Shopify
       return { id: input.id, success: true };
@@ -241,7 +221,7 @@ export const productsCoRouter = router({
    * Cancel subscription
    */
   cancelSubscription: protectedProcedure
-    .input(subscriptionIdSchema)
+    .input(ProductsCo.subscriptionIdSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Cancel in Shopify and update database
       return { success: true };
@@ -268,7 +248,7 @@ export const productsCoRouter = router({
    * Add item to cart
    */
   addToCart: protectedProcedure
-    .input(addToCartSchema)
+    .input(ProductsCo.addToCartSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Add to Shopify cart
       return { success: true };
@@ -278,7 +258,7 @@ export const productsCoRouter = router({
    * Update cart item quantity
    */
   updateCartItem: protectedProcedure
-    .input(updateCartItemSchema)
+    .input(ProductsCo.updateCartItemSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Update in Shopify cart
       return { success: true };
@@ -288,7 +268,7 @@ export const productsCoRouter = router({
    * Remove item from cart
    */
   removeFromCart: protectedProcedure
-    .input(removeFromCartSchema)
+    .input(ProductsCo.removeFromCartSchema)
     .mutation(async ({ ctx, input }) => {
       // TODO: Remove from Shopify cart
       return { success: true };

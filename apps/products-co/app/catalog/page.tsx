@@ -49,65 +49,65 @@ export default function CatalogPage(): React.ReactElement {
       : MOCK_PRODUCTS.filter((p) => p.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)]">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-[var(--color-foreground)]">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-foreground)]">
             Shop Premium Pet Gear
           </h1>
-          <p className="text-xl text-[var(--color-foreground-secondary)]">
-            Browse our collection of high-quality, ready-made products
+          <p className="text-lg text-[var(--color-foreground-secondary)]">
+            High-quality, ready-made products for your pet
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
           {CATEGORIES.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
               className={`
-                px-6 py-3 rounded-xl font-medium transition-all
+                px-4 py-2 rounded-lg font-medium transition-all text-sm
                 ${
                   selectedCategory === category.id
-                    ? 'bg-[var(--color-primary)] text-white shadow-lg scale-105'
-                    : 'bg-[var(--color-surface)] text-[var(--color-foreground)] border border-[var(--color-border)] hover:border-[var(--color-primary)]'
+                    ? 'bg-[var(--color-primary)] text-white shadow-md'
+                    : 'bg-white text-[var(--color-foreground)] border border-[var(--color-border)] hover:border-[var(--color-primary)]'
                 }
               `}
             >
-              <span className="mr-2">{category.icon}</span>
+              <span className="mr-1.5">{category.icon}</span>
               {category.label}
             </button>
           ))}
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {filteredProducts.map((product) => (
             <Link
               key={product.id}
               href={`/catalog/${product.id}`}
-              className="group rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden hover:border-[var(--color-primary)] hover:shadow-xl transition-all"
+              className="group rounded-xl border border-[var(--color-border)] bg-white overflow-hidden hover:border-[var(--color-primary)] hover:shadow-lg transition-all"
             >
               {/* Product Image Placeholder */}
-              <div className="aspect-square bg-gradient-to-br from-[var(--color-primary)]/10 to-[var(--color-primary)]/5 flex items-center justify-center">
-                <span className="text-8xl opacity-30">🐕</span>
+              <div className="aspect-square bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                <span className="text-7xl opacity-40">🐕</span>
               </div>
 
               {/* Product Info */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
+              <div className="p-5">
+                <h3 className="text-lg font-bold mb-1 text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
                   {product.name}
                 </h3>
                 <p className="text-sm text-[var(--color-foreground-secondary)] mb-4">
                   {product.description}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[var(--color-primary)]">
+                  <span className="text-xl font-bold text-[var(--color-primary)]">
                     ${product.price}
                   </span>
-                  <button className="px-4 py-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)] hover:text-white transition-all font-medium">
+                  <button className="px-4 py-2 bg-[var(--color-primary)] text-white text-sm rounded-lg hover:bg-[var(--color-secondary)] transition-all font-medium">
                     Add to Cart
                   </button>
                 </div>

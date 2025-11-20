@@ -180,10 +180,5 @@ export const productBySlugSchema = z.object({
   slug: z.string(),
 });
 
-// Export inferred types
-export type CreateDesignInput = z.infer<typeof createDesignSchema>;
-export type UpdateDesignInput = z.infer<typeof updateDesignSchema>;
-export type CreateSubscriptionInput = z.infer<typeof createSubscriptionSchema>;
-export type UpdateSubscriptionInput = z.infer<typeof updateSubscriptionSchema>;
-export type ProductConfig = z.infer<typeof productConfigSchema>;
-export type Address = z.infer<typeof addressSchema>;
+// Types are exported from ./types.ts
+

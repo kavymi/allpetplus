@@ -19,9 +19,11 @@
       "@pet/api/*": ["libs/api/src/*"],
       "@pet/backend/*": ["services/backend/src/*"],
       "@pet/domain": ["libs/domain/src/index.ts"],
+      "@pet/domain/*": ["libs/domain/src/lib/*"],
       "@pet/messaging": ["libs/messaging/src/index.ts"],
       "@pet/shared": ["libs/shared/src/index.ts"],
       "@pet/shared/*": ["libs/shared/src/*"],
+      "@pet/ui": ["libs/ui/src/index.ts"],
       "@pet/web/*": ["apps/web/src/*"]
     }
   },

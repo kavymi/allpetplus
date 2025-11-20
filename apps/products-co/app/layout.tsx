@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { Footer } from '@pet/ui';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -13,7 +15,12 @@ export default function RootLayout({
 }): React.ReactElement {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen flex flex-col">
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer LinkComponent={Link} />
+      </body>
     </html>
   );
 }
