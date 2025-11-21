@@ -12,7 +12,7 @@ Welcome to the All Pet Plus documentation. This guide will help you navigate our
 **New to the project?** Start here:
 
 1. **[How To Setup](./how-to-setup.md)** ⭐ **START HERE** - Complete setup guide (30-45 min)
-2. [Architecture Overview](./architecture/architecture.md) - Understand the system design
+2. **[Master Architecture](./ARCHITECTURE.md)** 🆕 **ONE PAGE** - Complete system overview
 3. [Code Patterns](./development/code-patterns.md) - Learn our coding conventions
 4. [Development Guide](./development/development-guide.md) - Daily development workflow
 
@@ -56,28 +56,27 @@ npx nx lint web
 - [Typography Guide](./design/typography-guide.md) - Font system and usage
 
 ### Architecture
-- [Architecture Overview](./architecture/architecture.md) - System design and decisions
+- **[Master Architecture](./ARCHITECTURE.md)** 🆕⭐ **ONE COMPREHENSIVE GUIDE** - Complete system architecture
+- [Flow Diagrams](./architecture/flow-diagrams.md) - Mermaid visual diagrams
 - [Component Architecture](./architecture/component-architecture.md) - React patterns
 - [Database Scaling Plan](./architecture/database-scaling-plan.md) - Scaling strategies
 - [3D Preview System](./architecture/3d-preview-system.md) - 3D rendering architecture
 - [3D Harness Redesign](./architecture/3d-harness-redesign.md) - Realistic harness model
-- [Hybrid Architecture](./architecture/hybrid-architecture-implementation.md) - Hybrid microservices
-- [Microservices Architecture](./architecture/microservices-architecture.md) - Microservices design
-- [Microfrontend Architecture](./architecture/microfrontend-architecture.md) - Micro-frontend patterns
-- [Flow Diagrams](./architecture/flow-diagrams.md) 🆕 - Mermaid visual diagrams
-- [Architecture Decision Records (ADRs)](./architecture/adr/) 🆕 - Formal decision documentation (4 ADRs)
+- [Pet Alliance Database Schema](./architecture/pet-alliance-database-schema.md) - Database design
+- [Architecture Decision Records (ADRs)](./architecture/adr/) - Formal decision documentation (4 ADRs)
 
 ### Development
 - [Development Guide](./development/development-guide.md) - Daily workflow and best practices
-- [Dev Workflow](./development/dev-workflow.md) 🆕 - Running services and microfrontends ⭐
-- [**Scaffold System Analysis**](./development/scaffold-analysis.md) 🆕🚀 - Complete automation system guide
-- [**Scaffold Quick Reference**](./development/scaffold-quick-reference.md) 🆕⚡ - Daily quick reference card
+- [Dev Workflow](./development/dev-workflow.md) - Running services and microfrontends
+- [**Scaffold System Analysis**](./development/scaffold-analysis.md) 🚀 - Complete automation system guide
+- [**Scaffold Quick Reference**](./development/scaffold-quick-reference.md) ⚡ - Daily quick reference card
+- **[shadcn/ui Guide](./development/shadcn-ui.md)** 🆕⭐ **CONSOLIDATED** - Complete UI component guide
 - [Code Patterns](./development/code-patterns.md) - TypeScript patterns and examples
 - [Testing Guide](./development/testing-guide.md) - Jest unit tests
-- [Test Coverage](./development/test-coverage.md) 🆕 - Coverage targets and standards
+- [Test Coverage](./development/test-coverage.md) - Coverage targets and standards
 - [Playwright Guide](./development/playwright-guide.md) - E2E tests with AI CodeGen
 - [Performance Guide](./development/performance-guide.md) - Optimization strategies
-- [Performance Benchmarks](./development/performance-benchmarks.md) 🆕 - Targets and metrics
+- [Performance Benchmarks](./development/performance-benchmarks.md) - Targets and metrics
 
 ### Guides
 - [**How To Setup**](./how-to-setup.md) ⭐ **Complete setup guide for new developers**
@@ -102,6 +101,8 @@ npx nx lint web
 - [Backend API](./api/backend-api-reference.md) - Backend API endpoints
 
 ### Features
+- **[Products CO](./features/products-co.md)** 🆕⭐ **COMPREHENSIVE** - Complete e-commerce guide
+- [Pet Solutions Alliance Master Plan](./features/pet-solutions-alliance-master.md) - All 12 divisions
 - [SEO Implementation](./features/seo-implementation-guide.md) - SEO best practices
 - [SEO Quick Reference](./features/seo-quick-reference.md) - SEO checklist
 - [3D Collar Customizer](./features/3d-collar-customizer.md) - 3D collar feature
